@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <!-- TailwindCSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- HTMX via CDN -->
+    <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+    <style>
+        .loading::after {
+            content: " ⚙️";
+            animation: dots 1s steps(5, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: " ⚙️"; }
+            40% { content: " ⚙️⚙️"; }
+            60% { content: " ⚙️⚙️⚙️"; }
+            80%, 100% { content: " ⚙️⚙️⚙️⚙️"; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="bg-white shadow-md rounded-lg p-6 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Galaxy S21 FastAPI Server</h1>
+            <p class="text-gray-600 mt-2">Running on Termux via FastAPI</p>
+        </header>
+
+        <main class="bg-white shadow-md rounded-lg p-6">
+            <section class="mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Server Status</h2>
+                <div 
+                    id="status-container" 
+                    class="bg-gray-100 p-4 rounded-lg"
+                    hx-get="/api/status"
+                    hx-trigger="load, every 30s"
+                    hx-indicator=".loading">
+                    <p class="loading">Checking server status</p>
+                </div>
+            </section>
+
+            <section class="mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">API Documentation</h2>
+                <p class="text-gray-700 mb-2">Available endpoints:</p>
+                <ul class="list-disc pl-6 text-gray-700">
+                    <li><code class="bg-gray-200 px-2 py-1 rounded">/</code> - This page</li>
+                    <li><code class="bg-gray-200 px-2 py-1 rounded">/api/status</code> - Server status information</li>
+                    <li><code class="bg-gray-200 px-2 py-1 rounded">/docs</code> - Interactive API documentation (Swagger UI)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">About</h2>
+                <p class="text-gray-700">
+                    This server is running on a Samsung Galaxy S21 using Termux.
+                    It demonstrates how a mobile device can be used as a lightweight
+                    web server using modern technologies like FastAPI, HTMX, and TailwindCSS.
+                </p>
+            </section>
+        </main>
+
+        <footer class="mt-8 text-center text-gray-500 text-sm">
+            <p>© 2024 Galaxy S21 FastAPI Server</p>
+        </footer>
+    </div>
+
+    <!-- Status display template (will be inserted by HTMX) -->
+    <template id="status-template">
+        <div class="grid grid-cols-2 gap-2">
+            <div class="font-semibold">Status:</div>
+            <div id="status-value" class="text-green-600"></div>
+            
+            <div class="font-semibold">Server:</div>
+            <div id="server-value"></div>
+            
+            <div class="font-semibold">Framework:</div>
+            <div id="framework-value"></div>
+        </div>
+    </template>
+
+    <script>
+        // Custom JS for handling the status response
+        document.addEventListener('htmx:afterSwap', function(event) {
+            if (event.detail.target.id === 'status-container') {
+                const data = JSON.parse(event.detail.xhr.responseText);
+                const template = document.getElementById('status-template').content.cloneNode(true);
+                
+                template.getElementById('status-value').textContent = data.status;
+                template.getElementById('server-value').textContent = data.server;
+                template.getElementById('framework-value').textContent = data.framework;
+                
+                event.detail.target.innerHTML = '';
+                event.detail.target.appendChild(template);
+            }
+        });
+    </script>
+</body>
+</html> 

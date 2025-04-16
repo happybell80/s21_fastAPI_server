@@ -24,8 +24,15 @@
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <header class="bg-white shadow-md rounded-lg p-6 mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">Galaxy S21 FastAPI Server</h1>
-            <p class="text-gray-600 mt-2">Running on Termux via FastAPI</p>
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Galaxy S21 FastAPI Server</h1>
+                    <p class="text-gray-600 mt-2">Running on Termux via FastAPI</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="/monitoring" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">모니터링 대시보드</a>
+                </div>
+            </div>
         </header>
 
         <main class="bg-white shadow-md rounded-lg p-6">
@@ -47,6 +54,9 @@
                 <ul class="list-disc pl-6 text-gray-700">
                     <li><code class="bg-gray-200 px-2 py-1 rounded">/</code> - This page</li>
                     <li><code class="bg-gray-200 px-2 py-1 rounded">/api/status</code> - Server status information</li>
+                    <li><code class="bg-gray-200 px-2 py-1 rounded">/monitoring</code> - System monitoring dashboard</li>
+                    <li><code class="bg-gray-200 px-2 py-1 rounded">/api/monitoring/current</code> - Current system metrics (JSON)</li>
+                    <li><code class="bg-gray-200 px-2 py-1 rounded">/api/monitoring/history</code> - Historical system metrics (JSON)</li>
                     <li><code class="bg-gray-200 px-2 py-1 rounded">/docs</code> - Interactive API documentation (Swagger UI)</li>
                 </ul>
             </section>

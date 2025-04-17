@@ -66,8 +66,15 @@ echo "===================================="
 # 가상 환경 활성화
 source "$HOME/apps/fastapi-app/venv/bin/activate"
 
-# Run the server in the background instead of foreground
-setsid "$HOME/apps/fastapi-app/venv/bin/uvicorn" app:app --host 0.0.0.0 --port 8000 > "$HOME/apps/fastapi-app/uvicorn.log" 2>&1 &
+# 현재 작업 디렉토리 확인 (디버깅용)
+echo "Current Working Directory: $(pwd)" >> "$HOME/apps/fastapi-app/uvicorn.log"
+
+# 작업 디렉토리를 명시적으로 앱 디렉토리로 설정
+cd "$HOME/apps/fastapi-app"
+echo "Changed to app directory: $(pwd)" >> "$HOME/apps/fastapi-app/uvicorn.log"
+
+# Run the server in the background instead of foreground (명시적 경로 사용)
+setsid "$HOME/apps/fastapi-app/venv/bin/uvicorn" ./app:app --host 0.0.0.0 --port 8000 > "$HOME/apps/fastapi-app/uvicorn.log" 2>&1 &
 
 # Print success message
 echo "Server started in background. Check uvicorn.log for details." 

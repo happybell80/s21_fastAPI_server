@@ -20,27 +20,8 @@ echo "SSH server started" >> $LOG_FILE
 nginx
 echo "Nginx started" >> $LOG_FILE
 
-# Check if port 8000 is already in use
-if ss -tulpn | grep -q ':8000'; then
-  echo "Port 8000 is in use, stopping existing process..." >> $LOG_FILE
-  pkill -f "uvicorn.*app:app" || true
-  sleep 2
-  # Force kill if still running
-  if ss -tulpn | grep -q ':8000'; then
-    echo "Forcing termination of process on port 8000" >> $LOG_FILE
-    pkill -9 -f "uvicorn.*app:app" || true
-    sleep 1
-  fi
-fi
-
-# Activate virtual environment if it exists
-if [ -d "venv" ]; then
-  source venv/bin/activate
-  echo "Virtual environment activated" >> $LOG_FILE
-fi
-
-# Start the FastAPI application (no reload in production)
-echo "Starting FastAPI application..." >> $LOG_FILE
-setsid uvicorn app:app --host 0.0.0.0 --port 8000 >> uvicorn.log 2>&1 &
+# 서버 실행은 통합 스크립트로 일원화
+echo "Starting FastAPI via unified script..." >> $LOG_FILE
+bash run_server.sh >> $LOG_FILE 2>&1
 
 echo "Boot script completed at $(date)" >> $LOG_FILE 

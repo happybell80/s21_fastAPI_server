@@ -77,22 +77,10 @@ jobs:
             sleep 3
           fi
 
-          # Create or update run script
-          RUN_SCRIPT="$APP_DIR/run_server.sh"
-          NEW_SCRIPT="#!/data/data/com.termux/files/usr/bin/bash
-          cd \"\$(dirname \"\$0\")\"
-          termux-wake-lock
-          setsid \"\$HOME/apps/fastapi-app/venv/bin/uvicorn\" app:app --host 0.0.0.0 --port 8000 >> \"\$HOME/apps/fastapi-app/uvicorn.log\" 2>&1 &"
-
-          # Update script only if changed
-          if [ ! -f "$RUN_SCRIPT" ] || [ "$(cat "$RUN_SCRIPT")" != "$NEW_SCRIPT" ]; then
-            echo "$NEW_SCRIPT" > "$RUN_SCRIPT"
-            chmod +x "$RUN_SCRIPT"
-          fi
-
-          # Run the server
-          echo "Starting server..."
-          "$RUN_SCRIPT"
+          # 통합된 실행 스크립트 사용
+          echo "Starting server using run_server.sh..."
+          chmod +x "$APP_DIR/run_server.sh"
+          bash "$APP_DIR/run_server.sh"
 
           # Verify server started
           sleep 5

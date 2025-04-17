@@ -58,11 +58,13 @@ pkill nginx 2>/dev/null
 nginx
 
 # Start the FastAPI application (no reload in production)
-echo "Starting FastAPI server..."
+echo "Starting FastAPI server in the background..."
 echo "Access the server at: http://localhost:8080"
 echo "API documentation at: http://localhost:8080/docs"
-echo "Press Ctrl+C to stop the server"
 echo "===================================="
 
-# Run the server without reload in production environment
-uvicorn app:app --host 0.0.0.0 --port 8000 
+# Run the server in the background instead of foreground
+setsid "$HOME/apps/fastapi-app/venv/bin/uvicorn" app:app --host 0.0.0.0 --port 8000 > "$HOME/apps/fastapi-app/uvicorn.log" 2>&1 &
+
+# Print success message
+echo "Server started in background. Check uvicorn.log for details." 

@@ -1,4 +1,6 @@
-fastapi
-uvicorn
-jinja2
-watchfiles
+fastapi>=0.100.0
+uvicorn>=0.23.0
+jinja2>=3.1.2
+
+# Development-only dependencies (can be removed in production)
+# watchfiles>=0.19.0

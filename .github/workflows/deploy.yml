@@ -20,25 +20,56 @@ jobs:
 
     - name: Deploy via SSH
       env:
-        HOST:  ${{ secrets.S21_HOST }}
-        PORT:  ${{ secrets.S21_PORT }}
-        USER:  ${{ secrets.S21_USER }}
+        HOST: ${{ secrets.S21_HOST }}
+        PORT: ${{ secrets.S21_PORT }}
+        USER: ${{ secrets.S21_USER }}
+        REPO: ${{ github.repository }}
       run: |
-        ssh -o StrictHostKeyChecking=no -p $PORT $USER@$HOST <<'EOS'
+        ssh -o StrictHostKeyChecking=no -p $PORT $USER@$HOST << ENDSSH
           set -e
           APP_DIR="$HOME/apps/fastapi-app"
+
+          # 코드 가져오기
           if [ ! -d "$APP_DIR/.git" ]; then
             mkdir -p "$HOME/apps"
-            git clone https://github.com/${{ github.repository }} "$APP_DIR"
+            git clone "https://github.com/$REPO" "$APP_DIR"
           fi
           git -C "$APP_DIR" pull --ff-only
+
+          # 가상환경‑의존성
           if [ ! -d "$APP_DIR/venv" ]; then
             python -m venv "$APP_DIR/venv"
           fi
           source "$APP_DIR/venv/bin/activate"
           pip install -r "$APP_DIR/requirements.txt" --upgrade
-          # Install watchfiles for better reload performance
-          pip install watchfiles --upgrade
+
+          # 기존 프로세스 종료
           pkill -f "uvicorn.*app:app" || true
-          nohup "$APP_DIR/venv/bin/uvicorn" app:app --host 0.0.0.0 --port 8000 --reload > "$APP_DIR/uvicorn.log" 2>&1 &
-        EOS
+          sleep 2
+          if ss -tulpn | grep -q ':8000'; then
+            echo "Port 8000 still in use, forcing kill"
+            pkill -9 -f "uvicorn.*app:app" || true
+            sleep 2
+          fi
+
+          # 실행 스크립트 생성
+          cat > "$APP_DIR/run_server.sh" << 'EOF'
+        #!/data/data/com.termux/files/usr/bin/bash
+        cd "$(dirname "$0")"
+        termux-wake-lock
+        setsid "$HOME/apps/fastapi-app/venv/bin/uvicorn" app:app \
+          --host 0.0.0.0 --port 8000 > "$HOME/apps/fastapi-app/uvicorn.log" 2>&1 &
+        EOF
+                  chmod +x "$APP_DIR/run_server.sh"
+
+                  # 서버 기동 및 확인
+                  "$APP_DIR/run_server.sh"
+                  sleep 3
+                  if ps aux | grep -v grep | grep -q "uvicorn.*app:app"; then
+                    echo "Server started successfully"
+                  else
+                    echo "Failed to start server"
+                    cat "$APP_DIR/uvicorn.log"
+                    exit 1
+                  fi
+                ENDSSH

@@ -9,8 +9,8 @@ termux-wake-lock
 echo "Wake lock enabled" >> $LOG_FILE
 
 # Set working directory
-cd /data/data/com.termux/files/home
-echo "Changed to home directory" >> $LOG_FILE
+cd /data/data/com.termux/files/home/apps/fastapi-app
+echo "Changed to app directory: $(pwd)" >> $LOG_FILE
 
 # Start SSH server
 sshd
@@ -33,8 +33,14 @@ if ss -tulpn | grep -q ':8000'; then
   fi
 fi
 
+# Activate virtual environment if it exists
+if [ -d "venv" ]; then
+  source venv/bin/activate
+  echo "Virtual environment activated" >> $LOG_FILE
+fi
+
 # Start the FastAPI application (no reload in production)
 echo "Starting FastAPI application..." >> $LOG_FILE
-nohup uvicorn app:app --host 0.0.0.0 --port 8000 >> $LOG_FILE 2>&1 &
+setsid uvicorn app:app --host 0.0.0.0 --port 8000 >> uvicorn.log 2>&1 &
 
 echo "Boot script completed at $(date)" >> $LOG_FILE 

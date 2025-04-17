@@ -52,24 +52,19 @@ jobs:
             sleep 2
           fi
 
-          # 실행 스크립트 생성
-          cat > "$APP_DIR/run_server.sh" << 'EOF'
-        #!/data/data/com.termux/files/usr/bin/bash
-        cd "$(dirname "$0")"
-        termux-wake-lock
-        setsid "$HOME/apps/fastapi-app/venv/bin/uvicorn" app:app \
-          --host 0.0.0.0 --port 8000 > "$HOME/apps/fastapi-app/uvicorn.log" 2>&1 &
-        EOF
-                  chmod +x "$APP_DIR/run_server.sh"
-
-                  # 서버 기동 및 확인
-                  "$APP_DIR/run_server.sh"
-                  sleep 3
-                  if ps aux | grep -v grep | grep -q "uvicorn.*app:app"; then
-                    echo "Server started successfully"
-                  else
-                    echo "Failed to start server"
-                    cat "$APP_DIR/uvicorn.log"
-                    exit 1
-                  fi
-                ENDSSH
+          # 서버 기동 및 확인 (기존 start_server.sh 사용)
+          echo "Starting server using start_server.sh..."
+          cd "$APP_DIR"
+          chmod +x start_server.sh
+          ./start_server.sh &
+          sleep 3
+          
+          # 서버 실행 확인
+          if ps aux | grep -v grep | grep -q "uvicorn.*app:app"; then
+            echo "Server started successfully"
+          else
+            echo "Failed to start server"
+            cat "$APP_DIR/uvicorn.log"
+            exit 1
+          fi
+        ENDSSH

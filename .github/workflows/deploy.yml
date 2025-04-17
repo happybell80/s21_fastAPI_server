@@ -45,14 +45,14 @@ jobs:
 
           # write unified run script
           cat > run_server.sh << 'EOF'
-#!/data/data/com.termux/files/usr/bin/bash
-cd "$(dirname "$0")"
-termux-wake-lock
-setsid "$APP_DIR/venv/bin/uvicorn" app:app --host 0.0.0.0 --port 8000 >> uvicorn.log 2>&1 &
-EOF
+          #!/data/data/com.termux/files/usr/bin/bash
+          cd "$(dirname "$0")"
+          termux-wake-lock
+          setsid "$APP_DIR/venv/bin/uvicorn" app:app --host 0.0.0.0 --port 8000 >> uvicorn.log 2>&1 &
+          EOF
 
-          chmod +x run_server.sh
-          ./run_server.sh
+                    chmod +x run_server.sh
+                    ./run_server.sh
 
           # verify startup
           sleep 5

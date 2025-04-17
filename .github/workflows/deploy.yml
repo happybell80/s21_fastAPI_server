@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -25,42 +26,41 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           ssh -o StrictHostKeyChecking=no -p $PORT $USER@$HOST << 'ENDSSH'
-            set -e
-            export HOME=/data/data/com.termux/files/home
-            APP_DIR="$HOME/apps/fastapi-app"
-            cd "$APP_DIR"
-            git pull --ff-only
+          set -e
+          export HOME=/data/data/com.termux/files/home
+          APP_DIR="$HOME/apps/fastapi-app"
+          cd "$APP_DIR"
+          git pull --ff-only
 
-            # prepare venv
-            if [ ! -d venv ]; then
-              python -m venv venv
-            fi
-            source venv/bin/activate
-            pip install -r requirements.txt --upgrade
+          # ensure venv
+          if [ ! -d venv ]; then
+            python -m venv venv
+          fi
+          source venv/bin/activate
+          pip install -r requirements.txt --upgrade
 
-            # kill any old server
-            pkill -f "uvicorn.*app:app" || true
-            sleep 2
+          # kill any old server
+          pkill -f "uvicorn.*app:app" || true
+          sleep 2
 
-            # write the unified start script
-            cat > run_server.sh << 'EOF'
+          # write unified run script
+          cat > run_server.sh << 'EOF'
 #!/data/data/com.termux/files/usr/bin/bash
 cd "$(dirname "$0")"
 termux-wake-lock
-setsid "$HOME/apps/fastapi-app/venv/bin/uvicorn" app:app \
-  --host 0.0.0.0 --port 8000 >> uvicorn.log 2>&1 &
+setsid "$APP_DIR/venv/bin/uvicorn" app:app --host 0.0.0.0 --port 8000 >> uvicorn.log 2>&1 &
 EOF
 
-            chmod +x run_server.sh
-            ./run_server.sh
+          chmod +x run_server.sh
+          ./run_server.sh
 
-            # verify
-            sleep 5
-            if pgrep -f "uvicorn.*app:app"; then
-              echo "Server started ✓"
-            else
-              echo "Failed to start – dumping log:"
-              cat uvicorn.log
-              exit 1
-            fi
+          # verify startup
+          sleep 5
+          if pgrep -f "uvicorn.*app:app"; then
+            echo "Server started ✓"
+          else
+            echo "Failed to start – dumping log:"
+            cat uvicorn.log
+            exit 1
+          fi
           ENDSSH

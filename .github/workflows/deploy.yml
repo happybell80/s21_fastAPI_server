@@ -10,57 +10,97 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
+    - name: Checkout source
+      uses: actions/checkout@v4
 
-      - name: Setup SSH key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.S21_SSH_KEY }}
+    - name: Setup SSH key
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.S21_SSH_KEY }}
 
-      - name: Deploy via SSH
-        env:
-          HOST: ${{ secrets.S21_HOST }}
-          PORT: ${{ secrets.S21_PORT }}
-          USER: ${{ secrets.S21_USER }}
-          REPO: ${{ github.repository }}
-        run: |
-          ssh -o StrictHostKeyChecking=no -p $PORT $USER@$HOST << 'ENDSSH'
+    - name: Deploy via SSH
+      env:
+        HOST: ${{ secrets.S21_HOST }}
+        PORT: ${{ secrets.S21_PORT }}
+        USER: ${{ secrets.S21_USER }}
+        REPO: ${{ github.repository }}
+      run: |
+        ssh -o StrictHostKeyChecking=no -p $PORT $USER@$HOST << 'ENDSSH'
           set -e
+          # Explicitly set HOME for Termux
           export HOME=/data/data/com.termux/files/home
           APP_DIR="$HOME/apps/fastapi-app"
+          
+          # Change to the application directory
           cd "$APP_DIR"
-          git pull --ff-only
 
-          # ensure venv
-          if [ ! -d venv ]; then
-            python -m venv venv
+          # Debug: Print environment and check directory
+          echo "HOME is set to: $HOME"
+          ls -ld "$HOME" || { echo "HOME directory inaccessible"; exit 1; }
+
+          # Ensure ss is installed
+          if ! command -v ss >/dev/null 2>&1; then
+            echo "Installing iproute2 for ss..."
+            pkg install iproute2 -y
           fi
-          source venv/bin/activate
-          pip install -r requirements.txt --upgrade
 
-          # kill any old server
+          # Setup and update code
+          if [ ! -d "$APP_DIR/.git" ]; then
+            mkdir -p "$HOME/apps" || { echo "Failed to create $HOME/apps"; exit 1; }
+            git clone "https://github.com/$REPO" "$APP_DIR" || {
+              echo "Git clone failed"
+              exit 1
+            } 
+          fi
+          git -C "$APP_DIR" pull --ff-only || {
+            echo "Git pull failed"
+            exit 1
+          }
+
+          # Setup virtual environment
+          if [ ! -d "$APP_DIR/venv" ]; then
+            python -m venv "$APP_DIR/venv"
+          fi
+          source "$APP_DIR/venv/bin/activate"
+          pip install -r "$APP_DIR/requirements.txt" --upgrade
+
+          # Stop any running Uvicorn processes - 2단계 종료로 강화
+          echo "Stopping any running Uvicorn processes..."
           pkill -f "uvicorn.*app:app" || true
-          sleep 2
+          pkill -9 -f "uvicorn.*app:app" || true
+          sleep 3
 
-          # write unified run script
-          cat > run_server.sh << 'EOF'
-          #!/data/data/com.termux/files/usr/bin/bash
-          cd "$(dirname "$0")"
+          # Check if port 8000 is in use, force kill if needed
+          if ss -tulpn 2>/dev/null | grep -q ':8000'; then
+            echo "Port 8000 still in use, forcing termination..."
+            pkill -9 -f "uvicorn.*app:app" || true
+            sleep 3
+          fi
+
+          # Create or update run script
+          RUN_SCRIPT="$APP_DIR/run_server.sh"
+          NEW_SCRIPT="#!/data/data/com.termux/files/usr/bin/bash
+          cd \"\$(dirname \"\$0\")\"
           termux-wake-lock
-          setsid "$APP_DIR/venv/bin/uvicorn" app:app --host 0.0.0.0 --port 8000 >> uvicorn.log 2>&1 &
-          EOF
+          setsid \"\$HOME/apps/fastapi-app/venv/bin/uvicorn\" app:app --host 0.0.0.0 --port 8000 >> \"\$HOME/apps/fastapi-app/uvicorn.log\" 2>&1 &"
 
-                    chmod +x run_server.sh
-                    ./run_server.sh
+          # Update script only if changed
+          if [ ! -f "$RUN_SCRIPT" ] || [ "$(cat "$RUN_SCRIPT")" != "$NEW_SCRIPT" ]; then
+            echo "$NEW_SCRIPT" > "$RUN_SCRIPT"
+            chmod +x "$RUN_SCRIPT"
+          fi
 
-          # verify startup
+          # Run the server
+          echo "Starting server..."
+          "$RUN_SCRIPT"
+
+          # Verify server started
           sleep 5
-          if pgrep -f "uvicorn.*app:app"; then
-            echo "Server started ✓"
+          if ps aux | grep -v grep | grep -q "uvicorn.*app:app"; then
+            echo "Server started successfully"
           else
-            echo "Failed to start – dumping log:"
-            cat uvicorn.log
+            echo "Failed to start server. Logs:"
+            cat "$APP_DIR/uvicorn.log"
             exit 1
           fi
-          ENDSSH
+        ENDSSH

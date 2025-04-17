@@ -18,7 +18,7 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.S21_SSH_KEY }}
 
-    - name: Deploy via SSH
+        - name: Deploy via SSH
       env:
         HOST: ${{ secrets.S21_HOST }}
         PORT: ${{ secrets.S21_PORT }}
@@ -27,68 +27,39 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no -p $PORT $USER@$HOST << 'ENDSSH'
           set -e
-          # Explicitly set HOME for Termux
           export HOME=/data/data/com.termux/files/home
           APP_DIR="$HOME/apps/fastapi-app"
-          
-          # Change to the application directory
           cd "$APP_DIR"
 
-          # (추가) 리포지토리에 새로 추적된 파일 덮어쓰기를 방지하는
-          # 언트래킹된 run_server.sh 을 삭제
-          rm -f run_server.sh
+          # 업데이트
+          git -C "$APP_DIR" pull --ff-only
 
-          # Debug: Print environment and check directory
-          echo "HOME is set to: $HOME"
-          ls -ld "$HOME" || { echo "HOME directory inaccessible"; exit 1; }
-
-          # Ensure ss is installed
-          if ! command -v ss >/dev/null 2>&1; then
-            echo "Installing iproute2 for ss..."
-            pkg install iproute2 -y
-          fi
-
-          # Setup and update code
-          if [ ! -d "$APP_DIR/.git" ]; then
-            mkdir -p "$HOME/apps" || { echo "Failed to create $HOME/apps"; exit 1; }
-            git clone "https://github.com/$REPO" "$APP_DIR" || {
-              echo "Git clone failed"
-              exit 1
-            }
-          fi
-          git -C "$APP_DIR" pull --ff-only || {
-            echo "Git pull failed"
-            exit 1
-          }
-
-          # Setup virtual environment
+          # 가상환경 준비
           if [ ! -d "$APP_DIR/venv" ]; then
             python -m venv "$APP_DIR/venv"
           fi
           source "$APP_DIR/venv/bin/activate"
           pip install -r "$APP_DIR/requirements.txt" --upgrade
 
-          # Stop any running Uvicorn processes - 2단계 종료로 강화
-          echo "Stopping any running Uvicorn processes..."
+          # 기존 프로세스 종료
           pkill -f "uvicorn.*app:app" || true
-          pkill -9 -f "uvicorn.*app:app" || true
-          sleep 3
+          sleep 2
 
-          # Check if port 8000 is in use, force kill if needed
-          if ss -tulpn 2>/dev/null | grep -q ':8000'; then
-            echo "Port 8000 still in use, forcing termination..."
-            pkill -9 -f "uvicorn.*app:app" || true
-            sleep 3
-          fi
+          # run_server.sh 생성
+          cat > "$APP_DIR/run_server.sh" << 'EOF'
+#!/data/data/com.termux/files/usr/bin/bash
+cd "$(dirname "$0")"
+termux-wake-lock
+setsid "$HOME/apps/fastapi-app/venv/bin/uvicorn" app:app \
+  --host 0.0.0.0 --port 8000 >> "$HOME/apps/fastapi-app/uvicorn.log" 2>&1 &
+EOF
 
-          # 통합된 실행 스크립트 사용
-          echo "Starting server using run_server.sh..."
           chmod +x "$APP_DIR/run_server.sh"
-          bash "$APP_DIR/run_server.sh"
+          bash   "$APP_DIR/run_server.sh"
 
-          # Verify server started
+          # 기동 확인
           sleep 5
-          if ps aux | grep -v grep | grep -q "uvicorn.*app:app"; then
+          if pgrep -f "uvicorn.*app:app" >/dev/null; then
             echo "Server started successfully"
           else
             echo "Failed to start server. Logs:"

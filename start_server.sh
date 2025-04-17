@@ -63,6 +63,9 @@ echo "Access the server at: http://localhost:8080"
 echo "API documentation at: http://localhost:8080/docs"
 echo "===================================="
 
+# 가상 환경 활성화
+source "$HOME/apps/fastapi-app/venv/bin/activate"
+
 # Run the server in the background instead of foreground
 setsid "$HOME/apps/fastapi-app/venv/bin/uvicorn" app:app --host 0.0.0.0 --port 8000 > "$HOME/apps/fastapi-app/uvicorn.log" 2>&1 &
 

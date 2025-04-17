@@ -66,6 +66,8 @@ termux_boot.log
 id_rsa*
 .ssh/
 authorized_keys
+gh_actions_key
+gh_actions_key.pub
 
 # Other
 .directory

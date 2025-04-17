@@ -30,6 +30,9 @@ jobs:
           # Explicitly set HOME for Termux
           export HOME=/data/data/com.termux/files/home
           APP_DIR="$HOME/apps/fastapi-app"
+          
+          # Change to the application directory
+          cd "$APP_DIR"
 
           # Debug: Print environment and check directory
           echo "HOME is set to: $HOME"
@@ -61,9 +64,10 @@ jobs:
           source "$APP_DIR/venv/bin/activate"
           pip install -r "$APP_DIR/requirements.txt" --upgrade
 
-          # Stop any running Uvicorn processes
+          # Stop any running Uvicorn processes - 2단계 종료로 강화
           echo "Stopping any running Uvicorn processes..."
           pkill -f "uvicorn.*app:app" || true
+          pkill -9 -f "uvicorn.*app:app" || true
           sleep 3
 
           # Check if port 8000 is in use, force kill if needed
@@ -76,10 +80,9 @@ jobs:
           # Create or update run script
           RUN_SCRIPT="$APP_DIR/run_server.sh"
           NEW_SCRIPT="#!/data/data/com.termux/files/usr/bin/bash
-        
-        cd \"\$(dirname \"\$0\")\"
-        termux-wake-lock
-        setsid \"\$HOME/apps/fastapi-app/venv/bin/uvicorn\" app:app --host 0.0.0.0 --port 8000 >> \"\$HOME/apps/fastapi-app/uvicorn.log\" 2>&1 &"
+          cd \"\$(dirname \"\$0\")\"
+          termux-wake-lock
+          setsid \"\$HOME/apps/fastapi-app/venv/bin/uvicorn\" app:app --host 0.0.0.0 --port 8000 >> \"\$HOME/apps/fastapi-app/uvicorn.log\" 2>&1 &"
 
           # Update script only if changed
           if [ ! -f "$RUN_SCRIPT" ] || [ "$(cat "$RUN_SCRIPT")" != "$NEW_SCRIPT" ]; then

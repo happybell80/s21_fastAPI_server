@@ -34,6 +34,10 @@ jobs:
           # Change to the application directory
           cd "$APP_DIR"
 
+          # (추가) 리포지토리에 새로 추적된 파일 덮어쓰기를 방지하는
+          # 언트래킹된 run_server.sh 을 삭제
+          rm -f run_server.sh
+
           # Debug: Print environment and check directory
           echo "HOME is set to: $HOME"
           ls -ld "$HOME" || { echo "HOME directory inaccessible"; exit 1; }

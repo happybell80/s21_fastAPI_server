@@ -25,51 +25,79 @@ jobs:
         USER: ${{ secrets.S21_USER }}
         REPO: ${{ github.repository }}
       run: |
-        ssh -o StrictHostKeyChecking=no -p $PORT $USER@$HOST << ENDSSH
+        ssh -o StrictHostKeyChecking=no -p $PORT $USER@$HOST << 'ENDSSH'
           set -e
+          # Explicitly set HOME for Termux
+          export HOME=/data/data/com.termux/files/home
           APP_DIR="$HOME/apps/fastapi-app"
 
-          # 코드 가져오기
-          if [ ! -d "$APP_DIR/.git" ]; then
-            mkdir -p "$HOME/apps"
-            git clone "https://github.com/$REPO" "$APP_DIR"
-          fi
-          git -C "$APP_DIR" pull --ff-only
+          # Debug: Print environment and check directory
+          echo "HOME is set to: $HOME"
+          ls -ld "$HOME" || { echo "HOME directory inaccessible"; exit 1; }
 
-          # 가상환경‑의존성
+          # Ensure ss is installed
+          if ! command -v ss >/dev/null 2>&1; then
+            echo "Installing iproute2 for ss..."
+            pkg install iproute2 -y
+          fi
+
+          # Setup and update code
+          if [ ! -d "$APP_DIR/.git" ]; then
+            mkdir -p "$HOME/apps" || { echo "Failed to create $HOME/apps"; exit 1; }
+            git clone "https://github.com/$REPO" "$APP_DIR" || {
+              echo "Git clone failed"
+              exit 1
+            }
+          fi
+          git -C "$APP_DIR" pull --ff-only || {
+            echo "Git pull failed"
+            exit 1
+          }
+
+          # Setup virtual environment
           if [ ! -d "$APP_DIR/venv" ]; then
             python -m venv "$APP_DIR/venv"
           fi
           source "$APP_DIR/venv/bin/activate"
           pip install -r "$APP_DIR/requirements.txt" --upgrade
 
-          # 기존 프로세스 종료
+          # Stop any running Uvicorn processes
+          echo "Stopping any running Uvicorn processes..."
           pkill -f "uvicorn.*app:app" || true
-          sleep 2
-          if ss -tulpn | grep -q ':8000'; then
-            echo "Port 8000 still in use, forcing kill"
+          sleep 3
+
+          # Check if port 8000 is in use, force kill if needed
+          if ss -tulpn 2>/dev/null | grep -q ':8000'; then
+            echo "Port 8000 still in use, forcing termination..."
             pkill -9 -f "uvicorn.*app:app" || true
-            sleep 2
+            sleep 3
           fi
 
-          # 실행 스크립트 생성
-          cat > "$APP_DIR/start_server.sh" << 'EOF'
-        #!/data/data/com.termux/files/usr/bin/bash
-        cd "$(dirname "$0")"
+          # Create or update run script
+          RUN_SCRIPT="$APP_DIR/run_server.sh"
+          NEW_SCRIPT="#!/data/data/com.termux/files/usr/bin/bash
+        
+        cd \"\$(dirname \"\$0\")\"
         termux-wake-lock
-        setsid "$HOME/apps/fastapi-app/venv/bin/uvicorn" app:app \
-          --host 0.0.0.0 --port 8000 > "$HOME/apps/fastapi-app/uvicorn.log" 2>&1 &
-        EOF
-                  chmod +x "$APP_DIR/start_server.sh"
+        setsid \"\$HOME/apps/fastapi-app/venv/bin/uvicorn\" app:app --host 0.0.0.0 --port 8000 >> \"\$HOME/apps/fastapi-app/uvicorn.log\" 2>&1 &"
 
-                  # 서버 기동 및 확인
-                  "$APP_DIR/start_server.sh"
-                  sleep 3
-                  if ps aux | grep -v grep | grep -q "uvicorn.*app:app"; then
-                    echo "Server started successfully"
-                  else
-                    echo "Failed to start server"
-                    cat "$APP_DIR/uvicorn.log"
-                    exit 1
-                  fi
-                ENDSSH
+          # Update script only if changed
+          if [ ! -f "$RUN_SCRIPT" ] || [ "$(cat "$RUN_SCRIPT")" != "$NEW_SCRIPT" ]; then
+            echo "$NEW_SCRIPT" > "$RUN_SCRIPT"
+            chmod +x "$RUN_SCRIPT"
+          fi
+
+          # Run the server
+          echo "Starting server..."
+          "$RUN_SCRIPT"
+
+          # Verify server started
+          sleep 5
+          if ps aux | grep -v grep | grep -q "uvicorn.*app:app"; then
+            echo "Server started successfully"
+          else
+            echo "Failed to start server. Logs:"
+            cat "$APP_DIR/uvicorn.log"
+            exit 1
+          fi
+        ENDSSH

@@ -1,8 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
-# 리디렉션 시작
-exec > >(tee -a "$HOME/apps/fastapi-app/uvicorn.log") 2>&1
-
 # Display banner
 echo "===================================="
 echo "  Galaxy S21 FastAPI Server Starter"
@@ -61,25 +58,11 @@ pkill nginx 2>/dev/null
 nginx
 
 # Start the FastAPI application (no reload in production)
-echo "Starting FastAPI server in the background..."
+echo "Starting FastAPI server..."
 echo "Access the server at: http://localhost:8080"
 echo "API documentation at: http://localhost:8080/docs"
-echo "Press Ctrl+C to stop the server (this won't actually stop it now)"
+echo "Press Ctrl+C to stop the server"
 echo "===================================="
 
-source "$HOME/apps/fastapi-app/venv/bin/activate"
-
-# 작업 디렉토리 출력 및 변경
-echo "Current Working Directory before cd: $(pwd)"
-cd "$HOME/apps/fastapi-app"
-echo "Current Working Directory after cd: $(pwd)"
-echo "Listing directory contents:"
-ls -la
-
-# Run the server in the background 및 모든 출력 리디렉션
-echo "Starting Uvicorn with command: $HOME/apps/fastapi-app/venv/bin/uvicorn app:app --host 0.0.0.0 --port 8000"
-"$HOME/apps/fastapi-app/venv/bin/uvicorn" app:app --host 0.0.0.0 --port 8000 &
-
-# 서버 시작 알림
-echo "Server process started with PID: $!"
-echo "Server should be running in background. Check uvicorn.log for details." 
+# Run the server without reload in production environment
+uvicorn app:app --host 0.0.0.0 --port 8000 

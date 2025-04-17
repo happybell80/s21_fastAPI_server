@@ -7,7 +7,7 @@ import os
 
 # Create FastAPI app instance
 app = FastAPI(title="Galaxy S21 FastAPI Server", 
-              description="A FastAPI server running on Samsung Galaxy S21 via Termux")
+            description="A FastAPI server running on Samsung Galaxy S21 via Termux")
 
 # Create directory for templates and static files if they don't exist
 os.makedirs("templates", exist_ok=True)

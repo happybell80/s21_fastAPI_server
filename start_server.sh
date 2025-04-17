@@ -1,5 +1,8 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
+# 리디렉션 시작
+exec > >(tee -a "$HOME/apps/fastapi-app/uvicorn.log") 2>&1
+
 # Display banner
 echo "===================================="
 echo "  Galaxy S21 FastAPI Server Starter"
@@ -61,20 +64,22 @@ nginx
 echo "Starting FastAPI server in the background..."
 echo "Access the server at: http://localhost:8080"
 echo "API documentation at: http://localhost:8080/docs"
+echo "Press Ctrl+C to stop the server (this won't actually stop it now)"
 echo "===================================="
 
-# 가상 환경 활성화
 source "$HOME/apps/fastapi-app/venv/bin/activate"
 
-# 현재 작업 디렉토리 확인 (디버깅용)
-echo "Current Working Directory: $(pwd)" >> "$HOME/apps/fastapi-app/uvicorn.log"
-
-# 작업 디렉토리를 명시적으로 앱 디렉토리로 설정
+# 작업 디렉토리 출력 및 변경
+echo "Current Working Directory before cd: $(pwd)"
 cd "$HOME/apps/fastapi-app"
-echo "Changed to app directory: $(pwd)" >> "$HOME/apps/fastapi-app/uvicorn.log"
+echo "Current Working Directory after cd: $(pwd)"
+echo "Listing directory contents:"
+ls -la
 
-# Run the server in the background instead of foreground (명시적 경로 사용)
-setsid "$HOME/apps/fastapi-app/venv/bin/uvicorn" ./app:app --host 0.0.0.0 --port 8000 > "$HOME/apps/fastapi-app/uvicorn.log" 2>&1 &
+# Run the server in the background 및 모든 출력 리디렉션
+echo "Starting Uvicorn with command: $HOME/apps/fastapi-app/venv/bin/uvicorn app:app --host 0.0.0.0 --port 8000"
+"$HOME/apps/fastapi-app/venv/bin/uvicorn" app:app --host 0.0.0.0 --port 8000 &
 
-# Print success message
-echo "Server started in background. Check uvicorn.log for details." 
+# 서버 시작 알림
+echo "Server process started with PID: $!"
+echo "Server should be running in background. Check uvicorn.log for details." 

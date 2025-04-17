@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import uvicorn
 import os
+import logging
 
 # Create FastAPI app instance
 app = FastAPI(title="Galaxy S21 FastAPI Server", 
@@ -43,5 +44,16 @@ async def status():
 # Add more API endpoints as needed
 
 if __name__ == "__main__":
+    # Setup logging
+    logging.basicConfig(level=logging.INFO)
+    logging.info("Starting server in development mode with auto-reload enabled")
+    
     # Run the server if executed as script
-    uvicorn.run("app:app", host="0.0.0.0", port=8080, reload=True) 
+    uvicorn.run(
+        "app:app", 
+        host="0.0.0.0", 
+        port=8080, 
+        reload=True,
+        reload_dirs=["./"],
+        log_level="info"
+    ) 

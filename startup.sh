@@ -22,6 +22,6 @@ echo "Nginx started" >> $LOG_FILE
 
 # Start the FastAPI application
 echo "Starting FastAPI application..." >> $LOG_FILE
-nohup uvicorn app:app --host 0.0.0.0 --port 8000 >> $LOG_FILE 2>&1 &
+nohup uvicorn app:app --host 0.0.0.0 --port 8000 --reload >> $LOG_FILE 2>&1 &
 
 echo "Boot script completed at $(date)" >> $LOG_FILE 

@@ -23,6 +23,7 @@ echo "Checking Python dependencies..."
 pip show fastapi >/dev/null 2>&1 || { echo "Installing FastAPI..."; pip install fastapi; }
 pip show uvicorn >/dev/null 2>&1 || { echo "Installing Uvicorn..."; pip install uvicorn; }
 pip show jinja2 >/dev/null 2>&1 || { echo "Installing Jinja2..."; pip install jinja2; }
+pip show watchfiles >/dev/null 2>&1 || { echo "Installing watchfiles for improved reload..."; pip install watchfiles; }
 
 # Start SSH server if not already running
 echo "Starting SSH server..."

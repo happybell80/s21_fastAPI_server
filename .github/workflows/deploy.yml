@@ -37,6 +37,8 @@ jobs:
           fi
           source "$APP_DIR/venv/bin/activate"
           pip install -r "$APP_DIR/requirements.txt" --upgrade
+          # Install watchfiles for better reload performance
+          pip install watchfiles --upgrade
           pkill -f "uvicorn.*app:app" || true
-          nohup "$APP_DIR/venv/bin/uvicorn" app:app --host 0.0.0.0 --port 8000 > "$APP_DIR/uvicorn.log" 2>&1 &
+          nohup "$APP_DIR/venv/bin/uvicorn" app:app --host 0.0.0.0 --port 8000 --reload > "$APP_DIR/uvicorn.log" 2>&1 &
         EOS

@@ -8,62 +8,59 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout source
-      uses: actions/checkout@v4
+      - name: Checkout source
+        uses: actions/checkout@v4
 
-    - name: Setup SSH key
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.S21_SSH_KEY }}
+      - name: Setup SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.S21_SSH_KEY }}
 
-        - name: Deploy via SSH
-      env:
-        HOST: ${{ secrets.S21_HOST }}
-        PORT: ${{ secrets.S21_PORT }}
-        USER: ${{ secrets.S21_USER }}
-        REPO: ${{ github.repository }}
-      run: |
-        ssh -o StrictHostKeyChecking=no -p $PORT $USER@$HOST << 'ENDSSH'
-          set -e
-          export HOME=/data/data/com.termux/files/home
-          APP_DIR="$HOME/apps/fastapi-app"
-          cd "$APP_DIR"
+      - name: Deploy via SSH
+        env:
+          HOST: ${{ secrets.S21_HOST }}
+          PORT: ${{ secrets.S21_PORT }}
+          USER: ${{ secrets.S21_USER }}
+          REPO: ${{ github.repository }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -p $PORT $USER@$HOST << 'ENDSSH'
+            set -e
+            export HOME=/data/data/com.termux/files/home
+            APP_DIR="$HOME/apps/fastapi-app"
+            cd "$APP_DIR"
+            git pull --ff-only
 
-          # 업데이트
-          git -C "$APP_DIR" pull --ff-only
+            # prepare venv
+            if [ ! -d venv ]; then
+              python -m venv venv
+            fi
+            source venv/bin/activate
+            pip install -r requirements.txt --upgrade
 
-          # 가상환경 준비
-          if [ ! -d "$APP_DIR/venv" ]; then
-            python -m venv "$APP_DIR/venv"
-          fi
-          source "$APP_DIR/venv/bin/activate"
-          pip install -r "$APP_DIR/requirements.txt" --upgrade
+            # kill any old server
+            pkill -f "uvicorn.*app:app" || true
+            sleep 2
 
-          # 기존 프로세스 종료
-          pkill -f "uvicorn.*app:app" || true
-          sleep 2
-
-          # run_server.sh 생성
-          cat > "$APP_DIR/run_server.sh" << 'EOF'
+            # write the unified start script
+            cat > run_server.sh << 'EOF'
 #!/data/data/com.termux/files/usr/bin/bash
 cd "$(dirname "$0")"
 termux-wake-lock
 setsid "$HOME/apps/fastapi-app/venv/bin/uvicorn" app:app \
-  --host 0.0.0.0 --port 8000 >> "$HOME/apps/fastapi-app/uvicorn.log" 2>&1 &
+  --host 0.0.0.0 --port 8000 >> uvicorn.log 2>&1 &
 EOF
 
-          chmod +x "$APP_DIR/run_server.sh"
-          bash   "$APP_DIR/run_server.sh"
+            chmod +x run_server.sh
+            ./run_server.sh
 
-          # 기동 확인
-          sleep 5
-          if pgrep -f "uvicorn.*app:app" >/dev/null; then
-            echo "Server started successfully"
-          else
-            echo "Failed to start server. Logs:"
-            cat "$APP_DIR/uvicorn.log"
-            exit 1
-          fi
-        ENDSSH
+            # verify
+            sleep 5
+            if pgrep -f "uvicorn.*app:app"; then
+              echo "Server started ✓"
+            else
+              echo "Failed to start – dumping log:"
+              cat uvicorn.log
+              exit 1
+            fi
+          ENDSSH

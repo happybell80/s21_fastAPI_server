@@ -60,20 +60,20 @@ header {
 }
 
 .logo {
-    display: flex !important;
+    display: flex ;
     align-items: center;
     gap: 6px;
     flex-wrap: nowrap;
 }
 
 .logo-image {
-    display: flex !important;
+    display: flex ;
     align-items: center;
     flex-shrink: 0;
     min-width: 24px;
     min-height: 24px;
-    opacity: 1 !important;
-    visibility: visible !important;
+    opacity: 1 ;
+    visibility: visible ;
 }
 
 .header-logo-img {
@@ -81,9 +81,9 @@ header {
     height: 70px;
     object-fit: cover;
     border-radius: 3px;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+    display: block ;
+    visibility: visible ;
+    opacity: 1 ;
     min-width: 24px;
     min-height: 24px;
     z-index: 50;
@@ -907,19 +907,19 @@ footer {
     .header-logo-img {
         width: 40px;
         height: 40px;
-        display: block !important;
-        visibility: visible !important;
+        display: block ;
+        visibility: visible ;
     }
     
     .logo {
         gap: 6px;
-        display: flex !important;
-        align-items: center !important;
+        display: flex ;
+        align-items: center ;
     }
     
     .logo-image {
-        display: flex !important;
-        visibility: visible !important;
+        display: flex ;
+        visibility: visible ;
     }
 }
 
@@ -945,12 +945,12 @@ footer {
     }
     
     .full-logo-text {
-        display: none;
+        display: none !important;
     }
     
     .short-logo-text {
-        display: inline;
-        font-size: 0.9rem;
+        display: inline !important;
+        font-size: 0.9rem !important;
     }
     
     nav ul {
@@ -1004,7 +1004,11 @@ footer {
     .logo a {
         display: none;
     }
-
+    /* 바로 아래에 추가 */
+    .logo > a {
+        display: inline-block !important;
+    }
+    
     .cta-button.top-right {
         display: none;
     }
@@ -1012,14 +1016,18 @@ footer {
 
 @media (max-width: 400px) {
     .header-logo-img {
-        width: 30px;
-        height: 30px;
-        display: block !important;
-        visibility: visible !important;
+        width: 24px ;
+        height: 24px ;
+        display: block ;
+        visibility: visible ;
     }
     
     .logo a {
-        display: block !important;
+        display: none;
+    }
+    /* 바로 아래에 추가 */
+    .logo > a {
+        display: inline-block !important;
     }
     
     .short-logo-text {

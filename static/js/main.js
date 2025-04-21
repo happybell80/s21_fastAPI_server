@@ -42,4 +42,20 @@ document.addEventListener('DOMContentLoaded', function() {
             rect.right <= (window.innerWidth || document.documentElement.clientWidth)
         );
     }
-}); 
+});
+
+// Mobile menu toggle functionality
+window.onload = function() {
+    const menuToggle = document.getElementById('mobile-menu');
+    const navMenu = document.getElementById('nav-menu');
+    
+    if (menuToggle && navMenu) {
+        menuToggle.addEventListener('click', function() {
+            console.log('Menu toggle clicked');
+            menuToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+    } else {
+        console.log('Menu elements not found');
+    }
+}; 

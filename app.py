@@ -27,7 +27,27 @@ async def root(request: Request):
     """
     return templates.TemplateResponse(
         "index.html", 
-        {"request": request, "title": "Galaxy S21 FastAPI Server"}
+        {"request": request, "title": "Goose Farm Investing - Every tokenized real-world asset, in one place."}
+    )
+
+@app.get("/about", response_class=HTMLResponse)
+async def about(request: Request):
+    """
+    Serve the about page
+    """
+    return templates.TemplateResponse(
+        "about.html", 
+        {"request": request, "title": "About - "}
+    )
+
+@app.get("/blog", response_class=HTMLResponse)
+async def blog(request: Request):
+    """
+    Serve the blog page
+    """
+    return templates.TemplateResponse(
+        "blog.html", 
+        {"request": request, "title": "Research Blog - Goose Farm Investing"}
     )
 
 @app.get("/api/status")

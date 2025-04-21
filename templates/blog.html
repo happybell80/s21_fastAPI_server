@@ -14,7 +14,12 @@
                 <img src="/static/img/hipgoose3.jpg" alt="GooseFarm Logo" class="header-logo-img">
                 <a href="/">GooseFarmInvesting.com</a>
             </div>
-            <nav>
+            <div class="menu-toggle" id="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav id="nav-menu">
                 <ul>
                     <li><a href="/about">About</a></li>
                     <li><a href="/blog" class="active">Research Blog</a></li>
@@ -212,5 +217,17 @@
     </footer>
 
     <script src="/static/js/main.js"></script>
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('mobile-menu');
+            const navMenu = document.getElementById('nav-menu');
+            
+            menuToggle.addEventListener('click', function() {
+                menuToggle.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+        });
+    </script>
 </body>
 </html> 

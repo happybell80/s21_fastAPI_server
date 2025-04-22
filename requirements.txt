@@ -1,6 +1,52 @@
+# Galaxy S21 (Termux) 설치 준비사항
+# 1. pkg update && pkg upgrade
+# 2. pkg install python python-dev clang make libffi-dev openssl-dev cargo
+
+# 설치 팁:
+# - 설치 문제 발생시: pip install --no-cache-dir -r requirements.txt 
+#   (캐시를 비우고 재시도 - 순수 Python 패키지도 가끔 오류 발생할 수 있음)
+# - 설치 완료 후: pip check (의존성 충돌 여부 검증)
+
+# Core dependencies - 대부분 순수 Python 패키지이므로 Termux에서도 문제 없이 설치됨
 fastapi>=0.100.0
 uvicorn>=0.23.0
 jinja2>=3.1.2
+python-multipart>=0.0.5
+# Pydantic 버전 선택시 주의:
+# - 2.0.0 이상: 필요시 Rust cargo로 소스 빌드됨 (속도 향상)
+# - 1.10.x: 순수 Python 구현, Termux에서 더 안정적으로 설치될 수 있음
+pydantic>=1.10.0,<2.0.0  # Termux 호환성을 위해 1.x 버전 사용
+email-validator>=2.0.0
 
-# Development-only dependencies (can be removed in production)
-# watchfiles>=0.19.0
+# Database
+sqlalchemy>=2.0.0
+alembic>=1.11.0
+
+# Testing
+pytest>=7.3.1
+httpx>=0.24.0
+
+# Linting and formatting
+flake8>=6.0.0
+black>=23.3.0
+isort>=5.12.0
+
+# Development tools
+watchfiles>=0.19.0
+
+# Production
+gunicorn>=21.2.0
+requests>=2.30.0
+
+# Optional packages - 필요할 때 주석 해제
+# 설치 전 필요한 Termux 패키지:
+# pkg install libjpeg-turbo-dev zlib-dev
+
+# python-jose[cryptography]>=3.3.0  # JWT tokens (openssl-dev 필요)
+# passlib[bcrypt]>=1.7.4  # Password hashing (clang, make 필요)
+# aiofiles>=23.1.0  # Async file operations (순수 Python)
+# pillow>=10.0.0  # Image processing (libjpeg-turbo-dev, zlib-dev 필요)
+
+# 설치 권장 순서:
+# 1. 기본 패키지 먼저 설치 (주석 해제 전)
+# 2. 각 optional 패키지를 개별적으로 설치하며 문제 해결

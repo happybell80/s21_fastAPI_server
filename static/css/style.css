@@ -68,7 +68,7 @@ header {
 }
 
 .logo-image {
-    margin-right: 0.75rem;
+    margin-right: 0.1rem;
 }
 
 .header-logo-img {
@@ -981,7 +981,7 @@ footer {
     .logo {
         gap: 6px;
         display: flex ;
-        align-items: center ;
+        align-items: flex-end ;
     }
     
     .logo-image {
@@ -1005,8 +1005,8 @@ footer {
     }
     
     .header-logo-img {
-        width: 40px;
-        height: 40px;
+        width: 35px;
+        height: 35px;
         display: block !important;
         visibility: visible !important;
     }
@@ -1017,7 +1017,7 @@ footer {
     
     .short-logo-text {
         display: inline !important;
-        font-size: 0.9rem !important;
+        font-size: 1.0rem !important;
     }
     
     nav ul {
@@ -1079,8 +1079,8 @@ footer {
 
 @media (max-width: 400px) {
     .header-logo-img {
-        width: 24px ;
-        height: 24px ;
+        width: 35px ;
+        height: 35px ;
         display: block ;
         visibility: visible ;
     }
@@ -1094,6 +1094,6 @@ footer {
     }
     
     .short-logo-text {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
     }
 } 

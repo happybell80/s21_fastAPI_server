@@ -92,14 +92,19 @@ header {
     display: none;
 }
 
+/* 기본 nav ul 스타일 (데스크톱) */
 nav ul {
     display: flex;
-    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.5rem; /* 1rem에서 0.5rem으로 줄임 */
 }
 
 nav ul li a {
     font-weight: 500;
     transition: color 0.2s ease;
+    padding: 0.2rem 0.4rem; /* 0.25rem 0.5rem에서 줄임 */
 }
 
 nav ul li a:hover, nav ul li a.active {
@@ -115,8 +120,10 @@ nav ul li a:hover, nav ul li a.active {
 
 /* Language Toggle Styles */
 .language-toggle {
-    position: relative;
-    margin-right: 1.5rem;
+    display: flex;
+    align-items: center;
+    margin-right: 0.7rem;
+    cursor: pointer;
 }
 
 /* Mobile Menu Toggle */
@@ -128,7 +135,7 @@ nav ul li a:hover, nav ul li a.active {
     height: 18px;
     cursor: pointer;
     z-index: 1010;
-    margin-left: 10px;
+    margin-left: 8px;
 }
 
 .menu-toggle span {
@@ -886,19 +893,22 @@ footer {
     
     nav ul {
         flex-direction: column;
-        padding: 0.5rem 0;
+        padding: 0.25rem 0;
         margin: 0;
+        gap: 0;
     }
     
     nav ul li {
         margin: 0;
         padding: 0;
+        line-height: 1.4;
     }
     
     nav ul li a {
         display: block;
-        padding: 0.5rem 1.5rem;
+        padding: 0.3rem 0.8rem;
         border-bottom: 1px solid #f0f0f0;
+        font-size: 0.95rem;
     }
     
     nav ul li:last-child a {
@@ -1061,10 +1071,6 @@ footer {
     .logo a {
         display: none;
     }
-    /* 바로 아래에 추가 */
-    .logo > a {
-        display: inline-block !important;
-    }
     
     .cta-button.top-right {
         display: none;
@@ -1082,7 +1088,7 @@ footer {
     .logo a {
         display: none;
     }
-    /* 바로 아래에 추가 */
+    /* 400px 이하에서만 .logo > a 선택자 유지 */
     .logo > a {
         display: inline-block !important;
     }

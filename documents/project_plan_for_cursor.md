@@ -1,5 +1,14 @@
 # GooseFarmInvesting.com 프로젝트 계획
 
+## Agents 지시사항 (중요!!!!!)
+
+- 절대 시킨 것 이외의 행동을 하지 않기
+- 뭔가를 하려면 충분한 설명을 하고 허락 받기
+- 단계별로 확인을 받고 진행하기
+- 수정이 완료되면 이 파일 (project_plan.md) 첨가하기. 첨가만 하기.
+- 오류 수정한 내용은 상세한 설명과 함께 error_fix.md 파일에 따로 적기(디렉토리 documents)
+
+
 ## 1. 개요
 
 GooseFarmInvesting.com은 실물 자산(RWA, Real World Asset)을 토큰화하여 시장 참여자에게 심층 인사이트와 분석 도구를 제공하는 웹 플랫폼입니다. 본 문서는 프로젝트의 진행 상황과 향후 개발 로드맵을 제시합니다.
@@ -45,6 +54,69 @@ GooseFarmInvesting.com은 실물 자산(RWA, Real World Asset)을 토큰화하�
   - 배포: AWS EC2 인스턴스 (추후)
 - **웹 서버**: Nginx (리버스 프록시 및 HTTPS)
 - **버전 관리**: GitHub, CI/CD(GitHub Actions)
+
+## 5.A 프로젝트 구조
+
+```
+C:.
+│  .gitignore                 # Git에서 무시할 파일 목록
+│  app.py                     # FastAPI 메인 애플리케이션 파일
+│  gh_actions_key             # GitHub Actions 배포용 SSH 키
+│  gh_actions_key.pub         # GitHub Actions 배포용 SSH 공개 키
+│  README.md                  # 프로젝트 설명 및 실행 방법
+│  requirements.txt           # Python 의존성 패키지 목록
+│  run_server.sh              # 서버 실행 스크립트
+│  startup.sh                 # 초기 설정 스크립트
+│  start_server.sh            # 서버 시작 스크립트
+│
+├─.github                     # GitHub 관련 설정
+│  └─workflows                # GitHub Actions 워크플로우
+│          deploy.yml         # CI/CD 배포 파이프라인 설정
+│
+├─documents                   # 프로젝트 문서
+│      development_instructions.md     # 개발 가이드
+│      nginx_8443.md                   # Nginx HTTPS 설정 가이드
+│      pretrained.md                   # 사전 훈련 모델 정보
+│      project_plan.md                 # 프로젝트 계획서 (현재 문서)
+│      s21_fastapi_server_plan.md      # S21 서버 설정 계획
+│      termux-ssh-setup.md             # Termux SSH 설정 가이드
+│      VSCode-Termux-Setup.md          # VSCode-Termux 연동 가이드
+│      vscode_ssh_guide.md             # VSCode SSH 가이드
+│
+├─static                      # 정적 자산 파일
+│  ├─css                      # 스타일시트
+│  │      style.css           # 메인 CSS 파일
+│  │
+│  ├─img                      # 이미지 파일
+│  │      Eng-title-from-kpd-2048x1152.png    # 영문 타이틀 이미지
+│  │      hipgoose3.jpg                       # 로고 이미지
+│  │      websites-under-construction-pages.jpg    # 공사중 이미지
+│  │
+│  └─js                       # JavaScript 파일
+│          main.js            # 메인 JS 파일
+│          polyfills.js       # 폴리필 JS 파일
+│
+├─templates                   # HTML 템플릿
+│  │  about.html              # 영문 소개 페이지
+│  │  blog.html               # 영문 블로그 페이지
+│  │  index.html              # 영문 메인 페이지
+│  │
+│  ├─includes                 # 영문 공통 컴포넌트
+│  │      footer.html         # 영문 푸터
+│  │      header.html         # 영문 헤더
+│  │
+│  └─ko                       # 한국어 템플릿
+│      │  about.html          # 한국어 소개 페이지
+│      │  blog.html           # 한국어 블로그 페이지
+│      │  index.html          # 한국어 메인 페이지
+│      │
+│      └─includes             # 한국어 공통 컴포넌트
+│              footer.html    # 한국어 푸터
+│              header.html    # 한국어 헤더
+│
+└─__pycache__                 # Python 캐시 파일
+        app.cpython-312.pyc   # 컴파일된 Python 파일
+```
 
 ## 6. 개발 환경 설정
 
@@ -154,9 +226,12 @@ GooseFarmInvesting.com은 실물 자산(RWA, Real World Asset)을 토큰화하�
 - 서버 성능 모니터링
 - 오류 로깅 및 알림 시스템
 
+
 ---
 
-*마지막 업데이트: 2023년 4월 22일*
+## 업데이트 이력
 
-본 문서는 프로젝트의 현재 상태를 기록하고 앞으로의 방향을 제시하기 위한 목적으로 작성되었습니다. 기술적 요구사항이나 프로젝트 범위의 변경 시 이 문서도 함께 업데이트됩니다.
+- 2023-04-22 - 프로젝트 계획 문서 초안 작성
+- 2023-04-22 - 프로젝트 디렉토리 구조 추가
+- 2023-04-22 20:40 - README.md 파일 업데이트 (project_plan.md 기반)
 

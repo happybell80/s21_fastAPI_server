@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>시장 분석 - GooseFarmInvesting.com</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', path='css/analysis.css') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="{{ url_for('static', path='js/polyfills.js') }}" nonce="{{ csp_nonce }}"></script>
+    <script src="https://d3js.org/d3.v7.min.js" nonce="{{ csp_nonce }}"></script>
+    <script src="{{ url_for('static', path='js/analysis.js') }}" nonce="{{ csp_nonce }}" defer></script>
+</head>
+<body class="analysis-body">
+    <header class="analysis-top-bar">
+        <div class="top-left">
+            <button id="toggle-menu" aria-label="메뉴 전환">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo">
+                <a href="/ko/">
+                    <img src="{{ url_for('static', path='img/hipgoose3.jpg') }}" alt="GooseFarm 로고" class="logo-img">
+                    <span>GooseFarmInvesting.com</span>
+                </a>
+            </div>
+        </div>
+        <div class="top-center">
+            <div class="search-container">
+                <input type="search" placeholder="자산, 네트워크 검색..." class="search-bar" />
+                <button class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="top-right">
+            <div class="language-toggle">
+                <button id="language-btn" class="language-btn">
+                    <i class="fas fa-globe"></i>
+                </button>
+                <div id="language-dropdown" class="language-dropdown">
+                    <a href="{{ request.url.path|replace('/ko', '') if request.url.path.startswith('/ko/') else request.url.path }}" data-lang="en" {% if not request.url.path.startswith('/ko/') %}class="active"{% endif %}>ENG</a>
+                    <a href="/ko{{ request.url.path if not request.url.path.startswith('/ko/') else request.url.path }}" data-lang="ko" {% if request.url.path.startswith('/ko/') %}class="active"{% endif %}>KOR</a>
+                </div>
+            </div>
+            <button class="login-btn">로그인</button>
+        </div>
+    </header>
+
+    <div class="analysis-container">
+        <aside class="side-menu" id="side-menu">
+            <nav class="side-nav">
+                <div class="nav-group">
+                    <h3>시장 데이터</h3>
+                    <ul>
+                        <li><a href="/ko/analysis" class="active"><i class="fas fa-chart-line"></i> 시장 개요</a></li>
+                        <li><a href="#"><i class="fas fa-newspaper"></i> 뉴스</a></li>
+                    </ul>
+                </div>
+                <div class="nav-group">
+                    <h3>자산 클래스</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-dollar-sign"></i> 스테이블코인</a></li>
+                        <li><a href="#"><i class="fas fa-landmark"></i> 미국 국채</a></li>
+                        <li><a href="#"><i class="fas fa-globe"></i> 글로벌 채권</a></li>
+                        <li><a href="#"><i class="fas fa-file-invoice-dollar"></i> 사모 대출</a></li>
+                        <li><a href="#"><i class="fas fa-box"></i> 원자재</a></li>
+                        <li><a href="#"><i class="fas fa-building"></i> 기관 펀드</a></li>
+                        <li><a href="#"><i class="fas fa-chart-bar"></i> 주식</a></li>
+                    </ul>
+                </div>
+                <div class="nav-group">
+                    <h3>참여자</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-network-wired"></i> 네트워크</a></li>
+                        <li><a href="#"><i class="fas fa-code"></i> 프로토콜</a></li>
+                        <li><a href="#"><i class="fas fa-building"></i> 기업 디렉토리</a></li>
+                    </ul>
+                </div>
+                <div class="nav-group">
+                    <h3>도구</h3>
+                    <ul>
+                        <li><a href="/ko/blog"><i class="fas fa-book"></i> 리서치 블로그</a></li>
+                        <li><a href="#"><i class="fas fa-newspaper"></i> 미디어 및 인용</a></li>
+                        <li><a href="#"><i class="fas fa-database"></i> 데이터 및 API 플랫폼</a></li>
+                        <li><a href="#"><i class="fas fa-download"></i> 다운로드</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <section class="overview-section">
+                <h1>글로벌 시장 개요</h1>
+                <p class="overview-description">
+                    GooseFarmInvesting.com에 오신 것을 환영합니다. 토큰화된 실물 자산과 공개 블록체인에 참여하는 투자자, 발행사, 서비스 제공업체를 탐색해보세요.⛓️
+                </p>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h3>총 온체인 RWA</h3>
+                        <div class="metric-value" id="total-rwa">$21.19B</div>
+                        <div class="metric-change positive" id="rwa-change">▲+9.78% (30일 전 대비)</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>총 자산 보유자</h3>
+                        <div class="metric-value" id="asset-holders">97,619</div>
+                        <div class="metric-change positive" id="holders-change">▲+6.97% (30일 전 대비)</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>총 자산 발행사</h3>
+                        <div class="metric-value" id="asset-issuers">185</div>
+                        <div class="metric-change neutral"></div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>총 스테이블코인 가치</h3>
+                        <div class="metric-value" id="stablecoin-value">$227.23B</div>
+                        <div class="metric-change positive" id="stablecoin-change">▲+0.11% (30일 전 대비)</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>총 스테이블코인 보유자</h3>
+                        <div class="metric-value" id="stablecoin-holders">158.88M</div>
+                        <div class="metric-change positive" id="sc-holders-change">▲+2.85% (30일 전 대비)</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="charts-section">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>총 RWA 가치</h2>
+                        <div class="chart-controls">
+                            <label class="toggle-container">
+                                <input type="checkbox" id="include-stablecoins" checked>
+                                <span class="toggle-label">스테이블코인 포함</span>
+                            </label>
+                            <button class="download-btn">다운로드</button>
+                        </div>
+                    </div>
+                    <div class="chart" id="rwa-time-chart"></div>
+                    <div class="chart-footer">2025년 4월 22일 기준</div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>네트워크별 RWA 시장 점유율</h2>
+                        <div class="chart-controls">
+                            <button class="download-btn">다운로드</button>
+                        </div>
+                    </div>
+                    <div class="chart" id="market-share-chart"></div>
+                </div>
+            </section>
+
+            <section class="table-section">
+                <h2>RWA 리그 테이블</h2>
+                <div class="table-controls">
+                    <label class="toggle-container">
+                        <input type="checkbox" id="include-stablecoins-table" checked>
+                        <span class="toggle-label">스테이블코인 포함</span>
+                    </label>
+                    <div class="tabs">
+                        <button class="tab active" data-tab="networks">네트워크</button>
+                        <button class="tab" data-tab="issuers">발행사</button>
+                        <button class="tab" data-tab="protocols">프로토콜</button>
+                        <button class="tab" data-tab="asset-classes">자산 클래스</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="networks-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>네트워크</th>
+                                <th>RWA 수</th>
+                                <th>총 가치</th>
+                                <th>30일 %</th>
+                                <th>시장 점유율</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><img src="{{ url_for('static', path='img/eth-logo.png') }}" alt="이더리움" class="network-icon">이더리움</td>
+                                <td>311</td>
+                                <td>$5,962.94M</td>
+                                <td class="positive">▲24.80%</td>
+                                <td>56.03%▲</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><img src="{{ url_for('static', path='img/zksync-logo.png') }}" alt="ZK싱크 에라" class="network-icon">ZK싱크 에라</td>
+                                <td>36</td>
+                                <td>$2,204.29M</td>
+                                <td class="positive">▲6.64%</td>
+                                <td>20.71%▼</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><img src="{{ url_for('static', path='img/stellar-logo.png') }}" alt="스텔라" class="network-icon">스텔라</td>
+                                <td>9</td>
+                                <td>$473.69M</td>
+                                <td class="positive">▲1.51%</td>
+                                <td>4.45%▼</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td><img src="{{ url_for('static', path='img/aptos-logo.png') }}" alt="앱토스" class="network-icon">앱토스</td>
+                                <td>11</td>
+                                <td>$332.02M</td>
+                                <td class="negative">▼1.80%</td>
+                                <td>3.12%▼</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td><img src="{{ url_for('static', path='img/algorand-logo.png') }}" alt="알고랜드" class="network-icon">알고랜드</td>
+                                <td>1</td>
+                                <td>$328.76M</td>
+                                <td class="negative">▼26.11%</td>
+                                <td>3.09%▼</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="news-section">
+                <h2>최신 뉴스</h2>
+                <a href="#" class="view-all">모두 보기</a>
+                <ul class="news-list">
+                    <li class="news-item">
+                        <a href="#">
+                            <span class="news-title">리플의 RLUSD 스테이블코인, Aave V3에 데뷔하며 과감한 DeFi 확장 계획 발표</span>
+                            <span class="news-time">3시간 전</span>
+                        </a>
+                    </li>
+                    <li class="news-item">
+                        <a href="#">
+                            <span class="news-title">서클, 글로벌 자금 이동 혁신을 위한 서클 페이먼트 네트워크 출시</span>
+                            <span class="news-time">5시간 전</span>
+                        </a>
+                    </li>
+                    <li class="news-item">
+                        <a href="#">
+                            <span class="news-title">메타플로우: AIGC + NFT + RWA – 온체인 문화 자산을 위한 인프라</span>
+                            <span class="news-time">9시간 전</span>
+                        </a>
+                    </li>
+                    <li class="news-item">
+                        <a href="#">
+                            <span class="news-title">트럼프 시대 암호화폐 대재앙 경고에 대한 ECB 발표에 위원회 분노</span>
+                            <span class="news-time">9시간 전</span>
+                        </a>
+                    </li>
+                    <li class="news-item">
+                        <a href="#">
+                            <span class="news-title">컴포시큐어, 현금-암호화폐 접근성을 위한 머니그램 지갑 통합 출시</span>
+                            <span class="news-time">15시간 전</span>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <footer class="analysis-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <span>GooseFarmInvesting.com</span>
+                <span>All Rights Reserved</span>
+            </div>
+            <div class="footer-links">
+                <a href="#">데이터 파트너</a>
+                <a href="/ko/blog">블로그</a>
+                <a href="#">이용약관</a>
+                <a href="#">개인정보 처리방침</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 

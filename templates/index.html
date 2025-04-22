@@ -3,15 +3,15 @@
         <section class="hero">
             <div class="container">
                 <div class="cta-button top-right">
-                    <a href="/analytics" class="btn">View Analytics →</a>
+                    <a href="/analysis" target="_blank" rel="noopener noreferrer" class="btn">View Analysis →</a>
                 </div>
                 <h1>Every tokenized real-world asset, in one place.</h1>
                 <p class="subtitle">Investors, issuers, and service providers use GooseFarmInvesting.com to understand tokenized asset markets.</p>
                 <div class="hero-image">
-                    <img src="/static/img/Eng-title-from-kpd-2048x1152.png" alt="Tokenized Assets" class="main-hero-img">
+                    <img src="{{ url_for('static', path='img/Eng-title-from-kpd-2048x1152.png') }}" alt="Tokenized Assets" class="main-hero-img">
                 </div>
                 <div class="cta-button center">
-                    <a href="/analytics" class="btn">View Analytics</a>
+                    <a href="/analysis" target="_blank" rel="noopener noreferrer" class="btn">View Analysis</a>
                 </div>
             </div>
         </section>
@@ -42,7 +42,7 @@
                 <h3>Made for digital asset teams, token investors, and asset issuers</h3>
                 <div class="feature-cards">
                     <div class="card">
-                        <h4>View Analytics ↗</h4>
+                        <h4><a href="/analysis" target="_blank" rel="noopener noreferrer">View Analysis ↗</a></h4>
                         <p>Discover both institutional and startup activity across asset classes and blockchain networks</p>
                     </div>
                     <div class="card">

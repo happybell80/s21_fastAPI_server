@@ -1,6 +1,12 @@
 // goosefarminvesting main JS file
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded - initializing...');
+
+    // Debug elements
+    console.log('Mobile menu button:', document.getElementById('mobile-menu'));
+    console.log('Nav menu:', document.getElementById('nav-menu'));
+
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -42,20 +48,103 @@ document.addEventListener('DOMContentLoaded', function() {
             rect.right <= (window.innerWidth || document.documentElement.clientWidth)
         );
     }
-});
 
-// Mobile menu toggle functionality
-window.onload = function() {
-    const menuToggle = document.getElementById('mobile-menu');
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu');
     const navMenu = document.getElementById('nav-menu');
     
-    if (menuToggle && navMenu) {
-        menuToggle.addEventListener('click', function() {
+    if (mobileMenuBtn && navMenu) {
+        console.log('Menu elements found and initialized');
+        mobileMenuBtn.addEventListener('click', function(e) {
             console.log('Menu toggle clicked');
-            menuToggle.classList.toggle('active');
+            e.preventDefault();
+            e.stopPropagation();
             navMenu.classList.toggle('active');
+            mobileMenuBtn.classList.toggle('active');
+            console.log('Nav menu class list after toggle:', navMenu.classList);
         });
     } else {
-        console.log('Menu elements not found');
+        console.error('Menu elements not found! mobile-menu:', mobileMenuBtn, 'nav-menu:', navMenu);
     }
-}; 
+    
+    // Language toggle functionality
+    const languageBtn = document.getElementById('language-btn');
+    const languageDropdown = document.getElementById('language-dropdown');
+    const languageOptions = document.querySelectorAll('.language-dropdown a');
+    
+    // Default language from browser or set to 'en'
+    let currentLang = localStorage.getItem('preferredLanguage') || 'en';
+    
+    // Show/hide language dropdown
+    if (languageBtn) {
+        languageBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            languageDropdown.classList.toggle('show');
+        });
+    }
+    
+    // Handle language selection
+    languageOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            const lang = this.getAttribute('data-lang');
+            setLanguage(lang);
+            
+            // Remove active class from all options
+            languageOptions.forEach(opt => opt.classList.remove('active'));
+            
+            // Add active class to selected option
+            this.classList.add('active');
+            
+            // Hide dropdown
+            languageDropdown.classList.remove('show');
+        });
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (languageDropdown && languageDropdown.classList.contains('show')) {
+            if (!languageDropdown.contains(e.target) && e.target !== languageBtn) {
+                languageDropdown.classList.remove('show');
+            }
+        }
+    });
+    
+    // Function to set language
+    function setLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('preferredLanguage', lang);
+        
+        // Redirect to language-specific page
+        if (lang === 'ko') {
+            // Check if we're already on a Korean page
+            if (!window.location.pathname.includes('/ko/')) {
+                // Generate Korean URL - add /ko/ to the path
+                const currentPath = window.location.pathname;
+                const koPath = currentPath === '/' ? '/ko/' : `/ko${currentPath}`;
+                window.location.href = koPath;
+            }
+        } else {
+            // English - remove /ko/ from path if present
+            if (window.location.pathname.includes('/ko/')) {
+                const enPath = window.location.pathname.replace('/ko', '');
+                window.location.href = enPath || '/';
+            }
+        }
+    }
+    
+    // Initialize language UI based on current language
+    function initLanguage() {
+        // Mark the current language as active in the dropdown
+        languageOptions.forEach(option => {
+            if (option.getAttribute('data-lang') === currentLang) {
+                option.classList.add('active');
+            } else {
+                option.classList.remove('active');
+            }
+        });
+    }
+    
+    // Initialize language
+    initLanguage();
+}); 

@@ -27,7 +27,7 @@ class CSPMiddleware(BaseHTTPMiddleware):
         # 기본 CSP 적용 (nonce 포함)
         csp_header = (
             f"default-src 'self'; "
-            f"script-src 'self' 'nonce-{nonce}' https://cdnjs.cloudflare.com; "
+            f"script-src 'self' 'nonce-{nonce}' 'unsafe-eval' https://cdnjs.cloudflare.com; "
             f"style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; "
             f"img-src 'self' data:; "
             f"font-src 'self' https://cdnjs.cloudflare.com; "

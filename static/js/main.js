@@ -7,29 +7,45 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Mobile menu button:', document.getElementById('mobile-menu'));
     console.log('Nav menu:', document.getElementById('nav-menu'));
 
-    // Smooth scrolling for anchor links (revised to avoid invalid selectors)
+    // Smooth scrolling for anchor links - simplified implementation
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             const href = this.getAttribute('href');
             
-            // Skip empty anchors or language toggles
-            if (href === "#" || this.closest('.language-dropdown')) {
-                return; // Allow default event handling for language toggles
+            // Skip processing for language selector links - simplified
+            if (this.closest('.language-dropdown')) {
+                return; // Let the language toggle handle these
             }
             
-            // Only proceed if there's a valid ID to scroll to
-            if (href.length > 1) { // Must be longer than just "#"
-                e.preventDefault(); // Only prevent default if we'll handle scrolling
-                try {
-                    const targetElement = document.querySelector(href);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth'
-                        });
-                    }
-                } catch (error) {
-                    console.error("Invalid selector:", href);
+            // Skip if it's just an anchor link with no target
+            if (href === "#") {
+                return;
+            }
+            
+            // Validate ID format using regex for CSS ID selector rules
+            const idPattern = /^#[a-zA-Z_-][a-zA-Z0-9_-]*$/;
+            if (!idPattern.test(href)) {
+                console.warn("Invalid ID format in href:", href);
+                return;
+            }
+            
+            // Only scroll to element if we have a valid target
+            e.preventDefault();
+            
+            try {
+                const targetId = href.substring(1); // Remove the # character
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    // Direct scrollIntoView without requestAnimationFrame
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                } else {
+                    console.warn(`Element with ID '${targetId}' not found.`);
                 }
+            } catch (error) {
+                console.error("Error during scroll handling:", error);
             }
         });
     });

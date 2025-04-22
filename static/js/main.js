@@ -7,18 +7,28 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Mobile menu button:', document.getElementById('mobile-menu'));
     console.log('Nav menu:', document.getElementById('nav-menu'));
 
-    // Smooth scrolling for anchor links
+    // Smooth scrolling for anchor links (revised to avoid invalid selectors)
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
             const href = this.getAttribute('href');
-            // Only try to scroll if the href is not just "#"
-            if (href !== "#") {
-                const targetElement = document.querySelector(href);
-                if (targetElement) {
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth'
-                    });
+            
+            // Skip empty anchors or language toggles
+            if (href === "#" || this.closest('.language-dropdown')) {
+                return; // Allow default event handling for language toggles
+            }
+            
+            // Only proceed if there's a valid ID to scroll to
+            if (href.length > 1) { // Must be longer than just "#"
+                e.preventDefault(); // Only prevent default if we'll handle scrolling
+                try {
+                    const targetElement = document.querySelector(href);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                } catch (error) {
+                    console.error("Invalid selector:", href);
                 }
             }
         });

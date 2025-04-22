@@ -69,12 +69,14 @@ header {
 
 .logo-image {
     margin-right: 0.1rem;
+    display: inline-block !important;
 }
 
 .header-logo-img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    display: block !important;
 }
 
 .logo-text {
@@ -82,14 +84,38 @@ header {
     font-weight: 700;
     color: var(--text-color);
     text-decoration: none;
+    display: inline-block !important;
 }
 
+/* 기본 상태 */
 .full-logo-text {
     display: inline;
 }
 
 .short-logo-text {
     display: none;
+}
+
+/* 576px 이하: 축약 로고 텍스트로 전환 */
+@media (max-width: 576px) {
+    .full-logo-text {
+        display: none !important;
+    }
+    
+    .short-logo-text {
+        display: inline !important;
+    }
+}
+
+/* 577px 이상: 전체 로고 텍스트 표시 */
+@media (min-width: 577px) {
+    .full-logo-text {
+        display: inline !important;
+    }
+    
+    .short-logo-text {
+        display: none !important;
+    }
 }
 
 /* 기본 nav ul 스타일 (데스크톱) */
@@ -850,18 +876,12 @@ footer {
     }
     
     .header-logo-img {
-        width: 50px;
-        height: 50px;
-        display: block;
-    }
-    
-    .logo a {
-        display: inline-block;
-        font-size: 1.3rem;
+        width: 35px;
+        height: 35px;
     }
     
     .logo-text {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
 }
 
@@ -951,18 +971,12 @@ footer {
     }
     
     .header-logo-img {
-        width: 40px;
-        height: 40px;
-        display: block;
-    }
-    
-    .logo a {
-        display: inline-block;
-        font-size: 1.1rem;
+        width: 35px;
+        height: 35px;
     }
     
     .logo-text {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
 
     .cta-button.top-right {
@@ -972,21 +986,16 @@ footer {
 
 @media (max-width: 768px) {
     .header-logo-img {
-        width: 40px;
-        height: 40px;
-        display: block ;
-        visibility: visible ;
+        width: 35px;
+        height: 35px;
     }
     
     .logo {
         gap: 6px;
-        display: flex ;
-        align-items: flex-end ;
     }
     
     .logo-image {
-        display: flex ;
-        visibility: visible ;
+        display: inline-block !important;
     }
 }
 
@@ -1007,8 +1016,6 @@ footer {
     .header-logo-img {
         width: 35px;
         height: 35px;
-        display: block !important;
-        visibility: visible !important;
     }
     
     .full-logo-text {
@@ -1079,21 +1086,11 @@ footer {
 
 @media (max-width: 400px) {
     .header-logo-img {
-        width: 35px ;
-        height: 35px ;
-        display: block ;
-        visibility: visible ;
-    }
-    
-    .logo a {
-        display: none;
-    }
-    /* 400px 이하에서만 .logo > a 선택자 유지 */
-    .logo > a {
-        display: inline-block !important;
+        width: 35px;
+        height: 35px;
     }
     
     .short-logo-text {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
     }
 } 

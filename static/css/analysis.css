@@ -7,7 +7,7 @@
 .page-header {
     background-color: #161f30;
     color: white;
-    padding: 3rem 0;
+    padding: 1rem 0;
     text-align: center;
 }
 
@@ -19,6 +19,199 @@
 .page-header p {
     font-size: 1.1rem;
     opacity: 0.8;
+}
+
+.site-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem;
+    align-items: flex-start;
+    padding: clamp(0.5rem, 0.4rem + 0.3vw, 1rem);
+}
+
+.header-left {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo-text {
+    font-size: clamp(1rem, 0.8rem + 1vw, 1.8rem);
+    font-weight: 700;
+    color: var(--text-color);
+    text-decoration: none;
+    display: inline-block !important;
+}
+
+.header-buttons {
+
+    margin-left: auto;
+    display: flex;
+    gap: clamp(0.5rem, 0.5rem + 0.25vw, 1rem);
+}
+
+.btn-signin {
+    display: inline-block;
+    padding: clamp(0.5rem, 0.5rem + 0.25vw, 0.9rem) clamp(0.5rem, 0.5rem + 0.25vw, 0.9rem);
+    color: white;
+    border-radius: 0.375rem;
+    font-size: clamp(0.5rem, 0.5rem + 0.25vw, 0.9rem);
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    background: #fff;
+    border: 1px solid #000;
+    color: #111;
+}
+
+.btn-signin:hover {
+    background-color: #0055dd;
+}
+
+.btn-contact {
+    display: inline-block;
+    padding: clamp(0.5rem, 0.5rem + 0.25vw, 0.9rem) clamp(0.5rem, 0.5rem + 0.25vw, 0.9rem);
+    border-radius: 0.375rem;
+    font-size: clamp(0.5rem, 0.5rem + 0.25vw, 0.9rem);
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    background: #111;
+    color: #fff;
+}
+
+.btn-contact:hover {
+    background-color: #0055dd;
+}
+
+.search-bar {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 10px 12px;
+    font-size: var(--fs-body);
+    background-color: transparent;
+}
+
+.search-btn {
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+    padding: 10px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.search-btn:hover {
+    background-color: #0055aa;
+}
+
+.search-btn i {
+    font-size: 16px;
+}
+
+/* 분석 페이지 상단 바 스타일 */
+.analysis-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 10px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.top-left, .top-right {
+    display: flex;
+    align-items: center;
+}
+
+.top-center {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    max-width: 400px;
+    margin: 0 20px;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .analysis-top-bar {
+        flex-wrap: wrap;
+        padding: 10px;
+    }
+    
+    .top-left {
+        order: 1;
+        width: 70%;
+    }
+    
+    .top-right {
+        order: 2;
+        width: 30%;
+        justify-content: flex-end;
+    }
+    
+    .top-center {
+        order: 3;
+        width: 100%;
+        margin: 10px 0 0;
+        max-width: 100%;
+    }
+    
+    .logo-text {
+        font-size: clamp(0.9rem, 0.7rem + 1vw, 1.2rem);
+    }
+}
+
+@media (max-width: 576px) {
+    .logo-text {
+        font-size: clamp(0.8rem, 0.7rem + 0.5vw, 1rem);
+    }
+        
+    .search-bar {
+        padding: 8px 10px;
+    }
+    
+    .search-btn {
+        padding: 8px 12px;
+    }
+}
+
+.auth-nav .btn {
+    margin-left: 0.5rem;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border: 1px solid #111;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+
+    
+    .header-right {
+        width: 100%;
+        margin-top: 1rem;
+        justify-content: flex-start;
+    }
+    
+    .auth-nav {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
 }
 
 .analysis-container {
@@ -197,7 +390,7 @@
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    padding: 1.25rem;
+    padding: clamp(0.5rem, 0.5rem + 0.25vw, 1rem);
     display: flex;
     align-items: center;
 }
@@ -459,14 +652,23 @@
 
 .search-container {
     position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    border: 1px solid var(--border-color);
+    border-radius: clamp(0.5rem, 0.5rem + 0.25vw, 1rem);
+    overflow: hidden;
+    background-color: var(--light-gray);
+    transition: all 0.3s ease;
 }
 
 .search-input {
-    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    padding: clamp(0.25rem, 0.25rem + 0.25vw, 1rem);
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 0.9rem;
-    width: 220px;
+    width: 100%;
 }
 
 .search-button {
@@ -750,6 +952,7 @@
     background-color: #eee;
 }
 
+
 /* Responsive */
 @media (max-width: 1200px) {
     .metrics-grid {
@@ -788,6 +991,19 @@
     
     .news-grid {
         grid-template-columns: 1fr;
+    }
+
+    .header-buttons {
+        size: 1rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .searc
+    -container {
+        width: 100%;
+        max-width: none;
+        order: 3;
     }
 }
 

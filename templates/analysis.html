@@ -15,17 +15,25 @@
 </head>
 <body>
     <div class="analysis-page">
-        <!-- 새로운 헤더 추가 -->
+
+        <!-- 헤더 -->
         <header class="site-header">
             <div class="header-left">
-            <a href="/analysis" class="logo-link">
-                <img src="{{ url_for('static', path='img/hipgoose3.jpg') }}"
-                    alt="GooseFarm logo"
-                    class="logo-image" />
-                <span class="logo-text">GooseFarm</span>
-            </a>
-            <p class="logo-tagline">| Every Goose in the world</p>
+                <a href="/analysis" class="logo-link">
+                    <img src="{{ url_for('static', path='img/hipgoose3.jpg') }}"
+                        alt="GooseFarm logo"
+                        class="logo-image" />
+                    <span class="logo-text">Goose Market</span>
+                </a>
+                <p class="logo-tagline">| Every Goose in the world</p>
+                <div class="header-buttons">
+                    <a href="/signin.html" class="btn btn-signin">Sign in</a>
+                    <a href="/contact.html" class="btn btn-contact">Contact</a>
+                </div>
             </div>
+            <div class="header-right">
+            </div>
+            
             <div class="search-container">
                 <input type="text"
                         class="search-input"
@@ -33,79 +41,15 @@
                 <button type="button" class="search-btn">Search</button>
             </div>
             
-            <div class="header-right">
-                <nav class="auth-nav">
-                    <a href="/signin.html" class="btn btn-signin">Sign in</a>
-                    <a href="/contact.html" class="btn btn-contact">Contact</a>
-                </nav>
-            </div>
         </header>
-        
-        <!-- 기존 메뉴는 주석 처리하여 백업 -->
-        <!--
-        <aside class="side-menu">
-            <div class="menu-header">
-                <div class="logo">
-                    <a href="/">
-                        <img src="{{ url_for('static', path='img/hipgoose3.jpg') }}" alt="GooseFarm Logo">
-                    </a>
-                </div>
-                <button class="menu-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-            
-            <nav class="menu-items">
-                <a href="/" class="menu-item">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </a>
-                <a href="/analysis" class="menu-item active">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Analysis</span>
-                </a>
-                <a href="/about" class="menu-item">
-                    <i class="fas fa-info-circle"></i>
-                    <span>About</span>
-                </a>
-                <a href="/blog" class="menu-item">
-                    <i class="fas fa-newspaper"></i>
-                    <span>Blog</span>
-                </a>
-            </nav>
-            
-            <div class="menu-footer">
-                <a href="/login" class="login-button">
-                    <i class="fas fa-user"></i>
-                    <span>Login</span>
-                </a>
-                <div class="social-icons">
-                    <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
-                    <a href="#" target="_blank"><i class="fab fa-discord"></i></a>
-                    <a href="#" target="_blank"><i class="fab fa-telegram"></i></a>
-                </div>
-            </div>
-        </aside>
-        -->
-        
+                
         <!-- Main Content -->
         <main class="main-content">
-            <header class="page-header">
+            <header class="hero">
                 <h1>Market Analysis</h1>
                 <div class="header-actions">
-                    <div class="timeframe-selector">
-                        <button class="timeframe-btn active" data-range="24h">24h</button>
-                        <button class="timeframe-btn" data-range="7d">7d</button>
-                        <button class="timeframe-btn" data-range="30d">30d</button>
-                        <button class="timeframe-btn" data-range="1y">1y</button>
-                    </div>
                     <div class="header-controls">
-                        <button class="refresh-btn">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
-                        <button class="settings-btn">
-                            <i class="fas fa-cog"></i>
-                        </button>
+                  
                     </div>
                 </div>
             </header>

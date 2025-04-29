@@ -76,7 +76,7 @@ async def root(request: Request):
     """
     return templates.TemplateResponse(
         "index.html", 
-        {"request": request, "title": "GooseFarmInvesting.com", "csp_nonce": request.state.csp_nonce}
+        {"request": request, "title": "Goose Farm Investing", "csp_nonce": request.state.csp_nonce}
     )
 
 @app.get("/about", response_class=HTMLResponse)
@@ -86,7 +86,7 @@ async def about(request: Request):
     """
     return templates.TemplateResponse(
         "about.html", 
-        {"request": request, "title": "About - GooseFarmInvesting.com", "csp_nonce": request.state.csp_nonce}
+        {"request": request, "title": "About - Goose Farm Investing", "csp_nonce": request.state.csp_nonce}
     )
 
 @app.get("/blog", response_class=HTMLResponse)
@@ -96,7 +96,7 @@ async def blog(request: Request):
     """
     return templates.TemplateResponse(
         "blog.html", 
-        {"request": request, "title": "Research Blog - GooseFarmInvesting.com", "csp_nonce": request.state.csp_nonce}
+        {"request": request, "title": "Research Blog - Goose Farm Investing", "csp_nonce": request.state.csp_nonce}
     )
 
 @app.get("/analysis", response_class=HTMLResponse)
@@ -106,7 +106,7 @@ async def analysis(request: Request):
     """
     return templates.TemplateResponse(
         "analysis.html", 
-        {"request": request, "title": "Market Analysis - GooseFarmInvesting.com", "csp_nonce": request.state.csp_nonce}
+        {"request": request, "title": "Market Analysis - Goose Farm Investing", "csp_nonce": request.state.csp_nonce}
     )
 
 @app.get("/mybenchmarkrate", response_class=HTMLResponse)
@@ -116,7 +116,7 @@ async def mybenchmarkrate(request: Request):
     """
     return templates.TemplateResponse(
         "mybanchmarkrate.html", 
-        {"request": request, "title": "My Personal Benchmark Rate - GooseFarmInvesting.com", "csp_nonce": request.state.csp_nonce}
+        {"request": request, "title": "My Personal Benchmark Rate - Goose Farm Investing", "csp_nonce": request.state.csp_nonce}
     )
 
 @app.post("/calculate-benchmark", response_class=HTMLResponse)

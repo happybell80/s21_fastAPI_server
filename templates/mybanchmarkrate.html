@@ -1,0 +1,148 @@
+{% include 'includes/header.html' %}
+
+        <section class="hero" style="background: linear-gradient(135deg, #0066cc10, #00669905);">
+            <div class="container">
+                <h1 style="color: #0066cc;">My Benchmark Rate</h1>
+                <p class="subtitle">Let's create our own benchmark interest rate.</p>
+            </div>
+        </section>
+        <section class="about-content">
+            <div class="container">
+                <div class="about-grid">
+                    <div class="about-text">
+                        <div style="position: relative; margin-bottom: 1.5rem;">
+                            <h2 style="display: inline-block; border-bottom: 3px solid #0066cc; padding-bottom: 8px;">Calculate Your Benchmark Rate</h2>
+                            <div style="position: absolute; right: 0; top: 0; font-size: 2.5rem; color: #0066cc10; font-weight: bold;">ROI</div>
+                        </div>
+                        <p>Calculate your investment benchmark rate based on your personal financial situation.</p>
+                        
+                        <form class="benchmark-form" action="/calculate-benchmark" method="post" style="background: #f8f9fa; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eaeaea; margin-top: 1.5rem;">
+                            <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #eaeaea;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <h3 style="margin: 0; color: #0066cc;">Personal Details</h3>
+                                    <div style="font-size: 0.85rem; color: #666;">All fields required</div>
+                                </div>
+                                <div style="display: table; width: 100%;">
+                                    <div style="display: table-row;">
+                                        <span class="question" style="display: table-cell; font-weight: 500; width: 60%; padding: 6px 0;">Your age?</span>
+                                        <span class="answer" style="display: table-cell; background: #f2f6fc; border-radius: 4px; padding: 6px 10px; width: 40%; text-align: right;">
+                                            <input id="age" name="age" value="{% if results %}{{ results.age }}{% else %}40{% endif %}" style="background: transparent; border: none; outline: none; width: 50px; text-align: right; margin-right: 5px;"/> years
+                                        </span>
+                                    </div>
+                                    <div style="display: table-row;">
+                                        <span class="question" style="display: table-cell; font-weight: 500; width: 60%; padding: 6px 0;">Your annual income?</span>
+                                        <span class="answer" style="display: table-cell; background: #f2f6fc; border-radius: 4px; padding: 6px 10px; width: 40%; text-align: right;">
+                                            <input id="income" name="income" value="{% if results %}{{ results.income }}{% else %}6000{% endif %}" style="background: transparent; border: none; outline: none; width: 60px; text-align: right; margin-right: 5px;"/> 10K KRW
+                                        </span>
+                                    </div>
+                                    <div style="display: table-row;">
+                                        <span class="question" style="display: table-cell; font-weight: 500; width: 60%; padding: 6px 0;">Your annual investment amount?</span>
+                                        <span class="answer" style="display: table-cell; background: #f2f6fc; border-radius: 4px; padding: 6px 10px; width: 40%; text-align: right;">
+                                            <input id="investment" name="investment" value="{% if results %}{{ results.investment }}{% else %}3000{% endif %}" style="background: transparent; border: none; outline: none; width: 60px; text-align: right; margin-right: 5px;"/> 10K KRW
+                                        </span>
+                                    </div>
+                                    <div style="display: table-row;">
+                                        <span class="question" style="display: table-cell; font-weight: 500; width: 60%; padding: 6px 0;">Your capital?</span>
+                                        <span class="answer" style="display: table-cell; background: #f2f6fc; border-radius: 4px; padding: 6px 10px; width: 40%; text-align: right;">
+                                            <input id="capital" name="capital" value="{% if results %}{{ results.capital }}{% else %}5{% endif %}" style="background: transparent; border: none; outline: none; width: 50px; text-align: right; margin-right: 5px;"/> 100M KRW
+                                        </span>
+                                    </div>
+                                    <div style="display: table-row;">
+                                        <span class="question" style="display: table-cell; font-weight: 500; width: 60%; padding: 6px 0;">Acceptable leverage ratio?</span>
+                                        <span class="answer" style="display: table-cell; background: #f2f6fc; border-radius: 4px; padding: 6px 10px; width: 40%; text-align: right;">
+                                            <input id="leverage" name="leverage" value="{% if results %}{{ results.leverage }}{% else %}70.0{% endif %}" style="background: transparent; border: none; outline: none; width: 50px; text-align: right; margin-right: 5px;"/> %
+                                        </span>
+                                    </div>
+                                    <div style="display: table-row;">
+                                        <span class="question" style="display: table-cell; font-weight: 500; width: 60%; padding: 6px 0;">Interest rate based on credit?</span>
+                                        <span class="answer" style="display: table-cell; background: #f2f6fc; border-radius: 4px; padding: 6px 10px; width: 40%; text-align: right;">
+                                            <input id="interate" name="interate" value="{% if results %}{{ results.interate }}{% else %}3.5{% endif %}" style="background: transparent; border: none; outline: none; width: 50px; text-align: right; margin-right: 5px;"/> %
+                                        </span>
+                                    </div>
+                                    <div style="display: table-row;">
+                                        <span class="question" style="display: table-cell; font-weight: 500; width: 60%; padding: 6px 0;">Target retirement age?</span>
+                                        <span class="answer" style="display: table-cell; background: #f2f6fc; border-radius: 4px; padding: 6px 10px; width: 40%; text-align: right;">
+                                            <input id="age_fired" name="age_fired" value="{% if results %}{{ results.age_fired }}{% else %}50{% endif %}" style="background: transparent; border: none; outline: none; width: 50px; text-align: right; margin-right: 5px;"/> years
+                                        </span>
+                                    </div>
+                                    <div style="display: table-row;">
+                                        <span class="question" style="display: table-cell; font-weight: 500; width: 60%; padding: 6px 0;">Target cash flow at retirement?</span>
+                                        <span class="answer" style="display: table-cell; background: #f2f6fc; border-radius: 4px; padding: 6px 10px; width: 40%; text-align: right;">
+                                            <input id="cashflow" name="cashflow" value="{% if results %}{{ results.cashflow }}{% else %}1000{% endif %}" style="background: transparent; border: none; outline: none; width: 60px; text-align: right; margin-right: 5px;"/> 10K KRW
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="assum" style="margin: 15px 0; padding: 10px; border-left: 3px solid #0066cc; background: #f2f6fc; font-style: italic; color: #555;">
+                                <span style="font-weight: 600; color: #0066cc;">Assumptions:</span> Annual inflation 2.5% / Holding cost 0.5% / Income tax rate 20%
+                            </div>
+                            <div style="text-align: center; margin-top: 20px;">
+                                <button type="submit" style="background: #0066cc; color: white; border: none; padding: 12px 25px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,102,204,0.2); width: auto;">
+                                    <i style="margin-right: 8px;">📊</i> Calculate Benchmark Rate
+                                </button>
+                            </div>
+                        </form>
+                        
+                        {% if results %}
+                        <div style="margin-top: 40px; position: relative;">
+                            <div style="position: absolute; right: 0; top: 0; font-size: 4rem; color: #0066cc10; font-weight: bold; z-index: 0;">RESULTS</div>
+                            <h2 style="display: inline-block; border-bottom: 3px solid #0066cc; padding-bottom: 8px; z-index: 1; position: relative;">Calculation Results</h2>
+                            <p>Based on your information, we've calculated the following:</p>
+                            
+                            <div class="about-text" style="background: #f8f9fa; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eaeaea; margin-top: 1.5rem; position: relative; z-index: 1;">
+                                <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 25px;">
+                                    <div style="flex: 1; min-width: 200px; background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+                                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 5px;">Your Benchmark Rate (ROI)</div>
+                                        <div style="font-size: 2rem; font-weight: bold; color: #0066cc;">{{ "%.2f"|format(results.benchmark_rate) }}%</div>
+                                    </div>
+                                    <div style="flex: 1; min-width: 200px; background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #4CAF50; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+                                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 5px;">Required Asset Return Rate (ROA)</div>
+                                        <div style="font-size: 2rem; font-weight: bold; color: #4CAF50;">{{ "%.2f"|format(results.asset_return_rate) }}%</div>
+                                    </div>
+                                </div>
+                                
+                                <p style="margin-top: 25px;"><strong style="color: #0066cc;">Note:</strong> This calculation is based on the following assumptions:</p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 15px; margin: 15px 0;">
+                                    <div style="flex: 1; min-width: 100px; background: #f2f6fc; padding: 15px; border-radius: 8px; text-align: center;">
+                                        <div style="font-size: 1.3rem; font-weight: bold; color: #0066cc;">{{ "%.1f"|format(results.inflation_rate) }}%</div>
+                                        <div style="color: #666; font-size: 0.85rem;">Annual inflation</div>
+                                    </div>
+                                    <div style="flex: 1; min-width: 100px; background: #f2f6fc; padding: 15px; border-radius: 8px; text-align: center;">
+                                        <div style="font-size: 1.3rem; font-weight: bold; color: #0066cc;">{{ "%.1f"|format(results.holding_cost) }}%</div>
+                                        <div style="color: #666; font-size: 0.85rem;">Holding cost</div>
+                                    </div>
+                                    <div style="flex: 1; min-width: 100px; background: #f2f6fc; padding: 15px; border-radius: 8px; text-align: center;">
+                                        <div style="font-size: 1.3rem; font-weight: bold; color: #0066cc;">{{ "%.1f"|format(results.income_tax_rate) }}%</div>
+                                        <div style="color: #666; font-size: 0.85rem;">Income tax rate</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-top: 25px; padding: 20px; background: #4CAF5010; border-radius: 8px; border: 1px dashed #4CAF50;">
+                                    <p style="margin: 0;"><strong>Monthly cash flow at retirement:</strong> <span style="font-size: 1.2rem; font-weight: bold; color: #4CAF50;">{{ "%.2f"|format(results.monthly_cash_flow) }} 10K KRW</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 12px; border: 1px solid #eaeaea;">
+                            <h3 style="color: #0066cc; margin-top: 0;">Learn More</h3>
+                            <a href="https://blog.naver.com/2020_lk/221909263362" style="display: block; margin-bottom: 10px; color: #0066cc; text-decoration: none;">
+                                <i style="margin-right: 5px;">📝</i> Related article: Have your own 'benchmark rate'
+                            </a>
+                            <a href="https://blog.naver.com/2020_lk" style="display: block; color: #0066cc; text-decoration: none;">
+                                <i style="margin-right: 5px;">🚀</i> Visit SpaceBoum
+                            </a>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+        <section class="cta-section" style="background: linear-gradient(135deg, #0066cc10, #4CAF5010);">
+            <div class="container">
+                <h2>Need personalized investment advice?</h2>
+                <a href="/contact" class="btn" style="background: #0066cc; box-shadow: 0 4px 6px rgba(0,102,204,0.2);">Contact our investment experts</a>
+            </div>
+        </section>
+        
+        {% include 'includes/footer.html' %}

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, Response, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -10,6 +10,7 @@ import secrets
 import base64
 from datetime import datetime, timedelta
 import random
+from benchmark_calculator import calculate_benchmark_rate
 
 # Create FastAPI app instance
 app = FastAPI(title="Galaxy S21 FastAPI Server", 
@@ -106,6 +107,48 @@ async def analysis(request: Request):
     return templates.TemplateResponse(
         "analysis.html", 
         {"request": request, "title": "Market Analysis - GooseFarmInvesting.com", "csp_nonce": request.state.csp_nonce}
+    )
+
+@app.get("/mybenchmarkrate", response_class=HTMLResponse)
+async def mybenchmarkrate(request: Request):
+    """
+    Serve the my benchmark rate page
+    """
+    return templates.TemplateResponse(
+        "mybanchmarkrate.html", 
+        {"request": request, "title": "My Personal Benchmark Rate - GooseFarmInvesting.com", "csp_nonce": request.state.csp_nonce}
+    )
+
+@app.post("/calculate-benchmark", response_class=HTMLResponse)
+async def calculate_benchmark(
+    request: Request,
+    age: int = Form(default=40, description="Your current age"),
+    income: float = Form(default=6000, description="Your annual income in 10K KRW"),
+    investment: float = Form(default=3000, description="Your annual investment amount in 10K KRW"),
+    capital: float = Form(default=5, description="Your capital in 100M KRW"),
+    leverage: float = Form(default=70.0, description="Acceptable leverage ratio in %"),
+    interate: float = Form(default=3.5, description="Interest rate based on credit in %"),
+    age_fired: int = Form(default=50, description="Target retirement age"),
+    cashflow: float = Form(default=1000, description="Target cash flow at retirement in 10K KRW")
+):
+    """
+    Process benchmark rate calculation and return results
+    """
+    # Calculate benchmark rate using the imported module
+    results = calculate_benchmark_rate(
+        age, income, investment, capital, 
+        leverage, interate, age_fired, cashflow
+    )
+    
+    # Return the same template but with results included
+    return templates.TemplateResponse(
+        "mybanchmarkrate.html", 
+        {
+            "request": request, 
+            "title": "My Personal Benchmark Rate - GooseFarmInvesting.com", 
+            "csp_nonce": request.state.csp_nonce,
+            "results": results
+        }
     )
 
 @app.get("/ko/", response_class=HTMLResponse)

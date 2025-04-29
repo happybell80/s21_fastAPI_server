@@ -13,7 +13,7 @@ import random
 from benchmark_calculator import calculate_benchmark_rate
 
 # Create FastAPI app instance
-app = FastAPI(title="Galaxy S21 FastAPI Server", 
+app = FastAPI(title="Goose Farm Investing", 
             description="A FastAPI server running on Samsung Galaxy S21 via Termux")
 
 # Create directory for templates and static files if they don't exist
@@ -86,7 +86,7 @@ async def about(request: Request):
     """
     return templates.TemplateResponse(
         "about.html", 
-        {"request": request, "title": "About - Goose Farm Investing", "csp_nonce": request.state.csp_nonce}
+        {"request": request, "title": "About_Goose Farm Investing", "csp_nonce": request.state.csp_nonce}
     )
 
 @app.get("/blog", response_class=HTMLResponse)
@@ -96,7 +96,7 @@ async def blog(request: Request):
     """
     return templates.TemplateResponse(
         "blog.html", 
-        {"request": request, "title": "Research Blog - Goose Farm Investing", "csp_nonce": request.state.csp_nonce}
+        {"request": request, "title": "Blog_Goose Farm Investing", "csp_nonce": request.state.csp_nonce}
     )
 
 @app.get("/analysis", response_class=HTMLResponse)
@@ -106,7 +106,7 @@ async def analysis(request: Request):
     """
     return templates.TemplateResponse(
         "analysis.html", 
-        {"request": request, "title": "Market Analysis - Goose Farm Investing", "csp_nonce": request.state.csp_nonce}
+        {"request": request, "title": "Goose Market", "csp_nonce": request.state.csp_nonce}
     )
 
 @app.get("/mybenchmarkrate", response_class=HTMLResponse)
@@ -116,7 +116,7 @@ async def mybenchmarkrate(request: Request):
     """
     return templates.TemplateResponse(
         "mybanchmarkrate.html", 
-        {"request": request, "title": "My Personal Benchmark Rate - Goose Farm Investing", "csp_nonce": request.state.csp_nonce}
+        {"request": request, "title": "BM_Rate_Goose Farm Investing", "csp_nonce": request.state.csp_nonce}
     )
 
 @app.post("/calculate-benchmark", response_class=HTMLResponse)
@@ -158,7 +158,7 @@ async def korean_root(request: Request):
     """
     return templates.TemplateResponse(
         "ko/index.html", 
-        {"request": request, "title": "GooseFarmInvesting.com", "csp_nonce": request.state.csp_nonce}
+        {"request": request, "title": "Goose Farm Investing", "csp_nonce": request.state.csp_nonce}
     )
 
 @app.get("/ko/about", response_class=HTMLResponse)
@@ -168,7 +168,7 @@ async def korean_about(request: Request):
     """
     return templates.TemplateResponse(
         "ko/about.html", 
-        {"request": request, "title": "소개 - GooseFarmInvesting.com", "csp_nonce": request.state.csp_nonce}
+        {"request": request, "title": "소개_GooseFarmInvesting.com", "csp_nonce": request.state.csp_nonce}
     )
 
 @app.get("/ko/blog", response_class=HTMLResponse)
@@ -178,7 +178,7 @@ async def korean_blog(request: Request):
     """
     return templates.TemplateResponse(
         "ko/blog.html", 
-        {"request": request, "title": "리서치 블로그 - GooseFarmInvesting.com", "csp_nonce": request.state.csp_nonce}
+        {"request": request, "title": "블로그_GooseFarmInvesting.com", "csp_nonce": request.state.csp_nonce}
     )
 
 @app.get("/ko/analysis", response_class=HTMLResponse)
@@ -188,7 +188,7 @@ async def korean_analysis(request: Request):
     """
     return templates.TemplateResponse(
         "ko/analysis.html", 
-        {"request": request, "title": "시장 분석 - GooseFarmInvesting.com", "csp_nonce": request.state.csp_nonce}
+        {"request": request, "title": "시장분석_GooseFarmInvesting.com", "csp_nonce": request.state.csp_nonce}
     )
 
 @app.get("/ko/{path:path}", response_class=HTMLResponse)
@@ -203,7 +203,7 @@ async def korean_pages(request: Request, path: str):
     if os.path.exists(f"templates/{ko_template}"):
         return templates.TemplateResponse(
             ko_template,
-            {"request": request, "title": "GooseFarmInvesting.com", "csp_nonce": request.state.csp_nonce}
+            {"request": request, "title": "Goose Farm Investing", "csp_nonce": request.state.csp_nonce}
         )
     
     # If Korean template doesn't exist, check if English exists

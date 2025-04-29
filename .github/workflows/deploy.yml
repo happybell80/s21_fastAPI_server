@@ -50,10 +50,11 @@ jobs:
             git clone "https://github.com/$REPO" "$APP_DIR" || {
               echo "Git clone failed"
               exit 1
-            } 
+            }
           fi
-          git -C "$APP_DIR" pull --ff-only || {
-            echo "Git pull failed"
+          # Rebase pull (fast-forward not possible)
+          git -C "$APP_DIR" pull --rebase origin main || {
+            echo "Git pull --rebase failed"
             exit 1
           }
 
